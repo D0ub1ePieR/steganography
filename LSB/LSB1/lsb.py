@@ -5,8 +5,6 @@ import matplotlib.pyplot as plt
 
 from PIL import Image
 
-#from crypt import AESCipher
-
 # Decompose a binary file into an array of bits
 def decompose(data):
 	v = []
@@ -25,19 +23,24 @@ def decompose(data):
 
 # Assemble an array of bits into a binary file
 def assemble(v):    
-	bytes = ""
-	print(v)
+	bytess = ""
+	#print(v)
 	length = len(v)
 	for idx in range(0, len(v)//8):
 		byte = 0
 		for i in range(0, 8):
 			if (idx*8+i < length):
 				byte = (byte<<1) + v[idx*8+i]                
-		bytes = bytes + chr(byte)
+		bytess = bytess + chr(byte)
 	#print(bytes)
-	payload_size = struct.unpack("i", bytes[:4])[0]
+	tmp=[]
+	for i in range(4):
+		tmp.append(str(ord(bytess[i])))
+	tmp.reverse()
+	payload_size=int(''.join(tmp))
+	#payload_size = struct.unpack("i", bytes[:4])[0]
 
-	return bytes[4: payload_size + 4]
+	return bytes(bytess[4: payload_size + 4],encoding='utf-8')
 
 # Set the i-th bit of v to x
 def set_bit(n, i, x):
