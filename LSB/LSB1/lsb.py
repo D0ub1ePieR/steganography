@@ -8,9 +8,9 @@ from PIL import Image
 # Decompose a binary file into an array of bits
 def decompose(data):
 	v = []
-	#print(data[0])
 	# Pack file len in 4 bytes
 	fSize = len(data)
+	#print(fSize)
 	bytes = [ord(chr(b)) for b in struct.pack("i", fSize)]
 
 	bytes += [ord(chr(b)) for b in data]
@@ -23,19 +23,22 @@ def decompose(data):
 
 # Assemble an array of bits into a binary file
 def assemble(v):
-	bytes = ""
-	print(v)
+	bytess = ""
+	#print(v)
 	length = len(v)
 	for idx in range(0, len(v)//8):
 		byte = 0
 		for i in range(0, 8):
 			if (idx*8+i < length):
 				byte = (byte<<1) + v[idx*8+i]
-		bytes = bytes + chr(byte)
-	#print(bytes)
-	payload_size = struct.unpack("i", bytes[:4])[0]
+		bytess = bytess + chr(byte)
+	payload_size=0
+	for i in range(4):
+		#tmp.append(str(ord(bytess[i])))
+		payload_size=payload_size+pow(256,i)*ord(bytess[i])
+	print(payload_size)
 
-	return bytes[4: payload_size + 4]
+	return bytes(bytess[4: payload_size + 4],encoding='utf-8')
 
 # Set the i-th bit of v to x
 def set_bit(n, i, x):
@@ -46,23 +49,35 @@ def set_bit(n, i, x):
 	return n
 
 # Embed payload file into LSB bits of an image
-def embed(imgFile, payload, password):
+def embed(imgFile, payload, flag):
 	# Process source image
 	img = Image.open(imgFile)
 	(width, height) = img.size
 	conv = img.convert("RGBA").getdata()
 	print ("[*] Input image size: %dx%d pixels." % (width, height))
-	max_size = width*height*3.0/8/1024		# max payload size
+
+	#region
+	if flag==1:
+		mat=[]
+		file=open("mat.txt","r")
+		for i in range(width):
+			mat.append(file.readline())
+
+	if flag==0:
+		max_size = width*height*3.0/8/1024		# max payload size
+	else:
+		max_size=0
+		for i in range(width):
+			for j in range(height):
+				if mat[i][j]=='1':
+					max_size=max_size+1
+		max_size=max_size*3.0/8/1024
 	print ("[*] Usable payload size: %.2f KB." % (max_size))
 
 	f = open(payload, "rb")
 	data = f.read()
 	f.close()
 	print( "[+] Payload size: %.3f KB " % (len(data)/1024.0))
-
-	# Encypt
-	#cipher = AESCipher(password)
-	#data_enc = cipher.encrypt(data)
 
 	# Process data from payload file
 	v = decompose(data)
@@ -73,7 +88,7 @@ def embed(imgFile, payload, password):
 
 	payload_size = len(v)/8/1024.0
 	print ("[+] Encrypted payload size: %.3f KB " % (payload_size))
-	if (payload_size > max_size - 4):
+	if (payload_size > max_size - 4/1024):
 		print ("[-] Cannot embed. File too large")
 		sys.exit()
 
@@ -87,9 +102,12 @@ def embed(imgFile, payload, password):
 		for w in range(width):
 			(r, g, b, a) = conv.getpixel((w, h))
 			if idx < len(v):
-				r = set_bit(r, 0, v[idx])
-				g = set_bit(g, 0, v[idx+1])
-				b = set_bit(b, 0, v[idx+2])
+				if flag==0 or mat[w][h]=='1':
+					r = set_bit(r, 0, v[idx])
+					g = set_bit(g, 0, v[idx+1])
+					b = set_bit(b, 0, v[idx+2])
+				else:
+					idx=idx-3
 			data_img.putpixel((w,h), (r, g, b, a))
 			idx = idx + 3
 
@@ -98,27 +116,31 @@ def embed(imgFile, payload, password):
 	print ("[+] %s embedded successfully!" % payload)
 
 # Extract data embedded into LSB of the input file
-def extract(in_file, out_file, password):
+def extract(in_file, out_file, flag):
 	# Process source image
 	img = Image.open(in_file)
 	(width, height) = img.size
 	conv = img.convert("RGBA").getdata()
 	print ("[+] Image size: %dx%d pixels." % (width, height))
 
+	#region
+	if flag==1:
+		mat=[]
+		file=open("mat.txt","r")
+		for i in range(width):
+			mat.append(file.readline())
+
 	# Extract LSBs
 	v = []
 	for h in range(height):
 		for w in range(width):
-			(r, g, b, a) = conv.getpixel((w, h))
-			v.append(r & 1)
-			v.append(g & 1)
-			v.append(b & 1)
+			if flag==0 or mat[w][h]=='1':
+				(r, g, b, a) = conv.getpixel((w, h))
+				v.append(r & 1)
+				v.append(g & 1)
+				v.append(b & 1)
 
 	data_out = assemble(v)
-
-	# Decrypt
-	#cipher = AESCipher(password)
-	#data_dec = cipher.decrypt(data_out)
 
 	# Write decrypted data
 	out_f = open(out_file, "wb")
@@ -187,10 +209,14 @@ if __name__ == "__main__":
 		usage(sys.argv[0])
 
 	if sys.argv[1] == "hide":
-		embed(sys.argv[2], sys.argv[3], sys.argv[4])
+		embed(sys.argv[2], sys.argv[3], 0)
 	elif sys.argv[1] == "extract":
-		extract(sys.argv[2], sys.argv[3], sys.argv[4])
+		extract(sys.argv[2], sys.argv[3], 0)
 	elif sys.argv[1] == "analyse":
 		analyse(sys.argv[2])
+	elif sys.argv[1] == "hide-region":
+		embed(sys.argv[2],sys.argv[3], 1)
+	elif sys.argv[1] == "extract-region":
+		extract(sys.argv[2],sys.argv[3], 1)
 	else:
 		print ("[-] Invalid operation specified")
