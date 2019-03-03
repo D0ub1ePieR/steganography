@@ -5,9 +5,13 @@ Steganographic Algorithms
     存储嵌入信息长度：4字节 </br>
     Usage：</br>
     * encode </br>
-        ***`python lsb.py hide [src img] [info file] [password]`***
+        ***`python lsb.py hide [src img] [info file] [password]`*** </br>
+        ***`python lsb.py hide-regin [src img] [info file] [password]`***
+        ```
+        在max.txt中存储M*N个0或1的字符表示目标图片中哪些像素可以取到用于隐写
     * decode</br>
-        ***`python lsb.py extract [encode img] [output file] [password]`***
+        ***`python lsb.py extract [encode img] [output file] [password]`*** </br>
+        ***`python lsb.py extract-regin [src img] [output file] [password]`***
     * analyse </br>
         ***`python lsb.py analyse [encode img]`***
 * LSB2
@@ -20,3 +24,17 @@ Steganographic Algorithms
     * decode text </br>
         ***`im = cv2.imread("my_new_image.png")`*** </br>
         ***`steg = LSBSteg(im)</br>print("Text value:",steg.decode_text())`***
+
+# nsF5
+```
+对于JPEG格式图片，进行在DCT系数中的隐写，利用非0的DCT系数，随机选取的模拟程序
+```
+* encode </br>
+运行**test.m**或执行
+***`nsf5_simulation(COVER,STEGO,ALPHA,SEED)`***
+    * cover为原图路径
+    * stego为结果图像存放路劲
+    * alpha为隐写系数，即利用多少可用隐写空间
+    * seed为模拟中伪随机数生成种子
+* decode </br>
+由于使用的是simulation，所以不能解码出所隐写部分的内容
