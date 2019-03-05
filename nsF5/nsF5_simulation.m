@@ -22,9 +22,11 @@ if ALPHA>0
     %%% embedding simulation
     embedding_efficiency = ALPHA/invH(ALPHA);  % bound on embedding efficiency
     nzAC = nnz(DCT)-nnz(DCT(1:8:end,1:8:end)); % number of nonzero AC DCT coefficients
+    % nzAC = nnz(DCT)-nnz(DCT(1:8:end,1:8:end))-nnz(DCT(DCT<2)); %
     changes = ceil(ALPHA*nzAC/embedding_efficiency); % number of changes nsF5 would make on bound
     changeable = (DCT~=0); % mask of all nonzero DCT coefficients in the image
     changeable(1:8:end,1:8:end) = false; % do not embed into DC modes
+    % changeable(find(abs(DCT)<2)) = 0
     changeable = find(changeable); % indexes of the changeable coefficients
     rand('state',SEED); % initialize PRNG using given SEED
     changeable = changeable(randperm(nzAC)); % create a pseudorandom walk over nonzero AC coefficients

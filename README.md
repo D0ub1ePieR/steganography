@@ -33,9 +33,17 @@ Steganographic Algorithms
 * encode </br>
 运行**test.m**或执行
 ***`nsf5_simulation(COVER,STEGO,ALPHA,SEED)`***
+
     * cover为原图路径
     * stego为结果图像存放路劲
     * alpha为隐写系数，即利用多少可用隐写空间
     * seed为模拟中伪随机数生成种子
+    * 在mat.txt中存入目标范围的01矩阵并将代码修改为(目前只支持限制DCT范围，还为装载根据矩阵限定范围)
+    ``` matlab
+    24    - nzAC = nnz(DCT)-nnz(DCT(1:8:end,1:8:end)); % number of nonzero AC DCT coefficients
+    25    + nzAC = nnz(DCT)-nnz(DCT(1:8:end,1:8:end))-nnz(DCT(DCT<2));
+    29    + % changeable(find(abs(DCT)<2)) = 0
+    ```
+
 * decode </br>
 由于使用的是simulation，所以不能解码出所隐写部分的内容
