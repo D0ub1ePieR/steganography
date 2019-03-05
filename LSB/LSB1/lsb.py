@@ -2,6 +2,7 @@ import sys
 import struct
 import numpy
 import matplotlib.pyplot as plt
+import random
 
 from PIL import Image
 
@@ -63,7 +64,7 @@ def embed(imgFile, payload, flag):
 		for i in range(width):
 			mat.append(file.readline())
 
-	if flag==0:
+	if flag==0 or flag==2:
 		max_size = width*height*3.0/8/1024		# max payload size
 	else:
 		max_size=0
@@ -102,7 +103,7 @@ def embed(imgFile, payload, flag):
 		for w in range(width):
 			(r, g, b, a) = conv.getpixel((w, h))
 			if idx < len(v):
-				if flag==0 or mat[w][h]=='1':
+				if flag==0 or (flag==2 and random.random()>0.95) or (flag==1 and mat[w][h]=='1' and random.random()>0.8):
 					r = set_bit(r, 0, v[idx])
 					g = set_bit(g, 0, v[idx+1])
 					b = set_bit(b, 0, v[idx+2])
@@ -218,5 +219,7 @@ if __name__ == "__main__":
 		embed(sys.argv[2],sys.argv[3], 1)
 	elif sys.argv[1] == "extract-region":
 		extract(sys.argv[2],sys.argv[3], 1)
+	elif sys.argv[1] == "hide-random":
+		embed(sys.argv[2],sys.argv[3], 2)
 	else:
 		print ("[-] Invalid operation specified")

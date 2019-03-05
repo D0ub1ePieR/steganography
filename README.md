@@ -6,7 +6,8 @@ Steganographic Algorithms
     Usage：</br>
     * encode </br>
         ***`python lsb.py hide [src img] [info file] [password]`*** </br>
-        ***`python lsb.py hide-regin [src img] [info file] [password]`***
+        ***`python lsb.py hide-regin [src img] [info file] [password]`*** </br>
+        ***`python lsb.py hide-random [src img] [info file] [password]`***
         ```
         在max.txt中存储M*N个0或1的字符表示目标图片中哪些像素可以取到用于隐写
     * decode</br>
