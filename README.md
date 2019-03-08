@@ -47,3 +47,5 @@ Steganographic Algorithms
 
 * decode </br>
 由于使用的是simulation，所以不能解码出所隐写部分的内容
+
+# HUGO
