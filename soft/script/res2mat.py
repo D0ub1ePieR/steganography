@@ -9,11 +9,11 @@ if __name__ == '__main__':
 
     file = sys.argv[1]
     try:
-        img = Image.open('./dss/' + file)
+        img = Image.open('./script/dss/' + file)
         img = img.convert('L')
-        mat = open(file[:-4] + '.txt', 'w')
+        mat = open('./script/' + file[:-4] + '.txt', 'w')
     except:
-        print('cannot open file\n')
+        print('res2mat: cannot open file\n')
         exit(-1)
     else:
         (width, height) = img.size
@@ -26,3 +26,4 @@ if __name__ == '__main__':
                     mat.write('1')
             mat.write('\n')
         mat.close()
+        print('success\n')

@@ -134,7 +134,7 @@ def extract(in_file, out_file, flag):
 
 	# Extract LSBs
 	v = []
-	numpy.random.seed(15)
+	numpy.random.seed(14748380)
 	ra = numpy.random.random(size=(height,width))
 	for h in range(height):
 		for w in range(width):

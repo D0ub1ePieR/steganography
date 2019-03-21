@@ -16,7 +16,7 @@ class color_stego:
         self.msg = ''
         self.payload_size = 0
         self.info = {'image-size': [0, 0], 'usable-size': 0, 'payload-size': 0.0, 'extract-data': 0}
-        index = self.image.find('/')
+        index = self.image.rfind('/')
         self.filename = self.image[index + 1:]
 
     def decompose(self, data):
@@ -61,7 +61,7 @@ class color_stego:
             img = Image.open(self.image)
         except:
             self.status = 0
-            self.msg = 'cannot open file'
+            self.msg = 'color_steg: cannot open file'
         else:
             (width, height) = img.size
             conv = img.convert("RGBA").getdata()
@@ -70,7 +70,7 @@ class color_stego:
             # region
             if flag == 1:
                 mat = []
-                file = open(self.image[:-4]+'.txt', "r")
+                file = open('./script/' + self.filename[:-4]+'.txt', "r")
                 for i in range(width):
                     mat.append(file.readline())
 
@@ -123,7 +123,7 @@ class color_stego:
                         data_img.putpixel((w, h), (r, g, b, a))
                         idx = idx + 3
 
-                steg_img.save(self.filename + "-stego.png", "PNG")
+                steg_img.save('./script/' + self.filename + "-stego.png", "PNG")
                 self.status = 1
 
     def extract(self, flag):
@@ -132,7 +132,7 @@ class color_stego:
             img = Image.open(self.image)
         except:
             self.status = 0
-            self.msg = 'cannot open file'
+            self.msg = 'color_steg: cannot open file'
         else:
             (width, height) = img.size
             conv = img.convert("RGBA").getdata()

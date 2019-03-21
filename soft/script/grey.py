@@ -6,7 +6,7 @@ import random
 
 from PIL import Image
 
-class color_stego:
+class grey_stego:
     def __init__(self, action, image, payload, seed):
         self.action = action
         self.image = image
@@ -70,7 +70,7 @@ class color_stego:
             # region
             if flag == 1:
                 mat = []
-                file = open(self.image[:-4]+'.txt', "r")
+                file = open('./script/' + self.image[:-4]+'.txt', "r")
                 for i in range(width):
                     mat.append(file.readline())
 
@@ -114,14 +114,14 @@ class color_stego:
                         g = conv.getpixel((w, h))
                         if idx < len(v):
                             if flag == 0 or (flag == 2 and random.random() > 0.95) or (
-                                    flag == 1 and mat[h][w] == '1' and r not in range(98, 102) and random_array[h][w] > 0.8):
+                                    flag == 1 and mat[h][w] == '1' and g not in range(98, 102) and random_array[h][w] > 0.8):
                                 g = self.set_bit(g, 0, v[idx])
                             else:
                                 idx = idx - 1
                         data_img.putpixel((w, h), g)
                         idx = idx + 1
 
-                steg_img.save(self.filename + "-stego.pgm")
+                steg_img.save('./script/' + self.filename + "-stego.pgm")
                 self.status = 1
 
     def extract(self, flag):
