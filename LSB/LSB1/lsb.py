@@ -98,12 +98,13 @@ def embed(imgFile, payload, flag):
 	data_img = steg_img.getdata()
 
 	idx = 0
-
+	numpy.random.seed(15)
+	ra = numpy.random.random(size=(height,width))
 	for h in range(height):
 		for w in range(width):
 			(r, g, b, a) = conv.getpixel((w, h))
 			if idx < len(v):
-				if flag==0 or (flag==2 and random.random()>0.95) or (flag==1 and mat[h][w]=='1' and r not in range(98,102)):
+				if flag==0 or (flag==2 and random.random()>0.95) or (flag==1 and mat[h][w]=='1' and r not in range(98,102) and ra[h][w]>0.8):
 					r = set_bit(r, 0, v[idx])
 					g = set_bit(g, 0, v[idx+1])
 					b = set_bit(b, 0, v[idx+2])
@@ -133,9 +134,11 @@ def extract(in_file, out_file, flag):
 
 	# Extract LSBs
 	v = []
+	numpy.random.seed(15)
+	ra = numpy.random.random(size=(height,width))
 	for h in range(height):
 		for w in range(width):
-			if flag==0 or (mat[h][w]=='1' and conv.getpixel((w, h))[0] not in range(98,102)):
+			if flag==0 or (mat[h][w]=='1' and conv.getpixel((w, h))[0] not in range(98,102) and ra[h][w]>0.8):
 				(r, g, b, a) = conv.getpixel((w, h))
 				v.append(r & 1)
 				v.append(g & 1)
