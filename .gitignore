@@ -3,3 +3,6 @@
 *.jpg
 *.bmp
 *.ui
+*.prototxt
+*.caffemodel
+*.pgm

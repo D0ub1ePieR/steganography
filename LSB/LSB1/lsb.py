@@ -68,8 +68,8 @@ def embed(imgFile, payload, flag):
 		max_size = width*height*3.0/8/1024		# max payload size
 	else:
 		max_size=0
-		for i in range(width):
-			for j in range(height):
+		for j in range(width):
+			for i in range(height):
 				if mat[i][j]=='1':
 					max_size=max_size+1
 		max_size=max_size*3.0/8/1024
@@ -103,7 +103,7 @@ def embed(imgFile, payload, flag):
 		for w in range(width):
 			(r, g, b, a) = conv.getpixel((w, h))
 			if idx < len(v):
-				if flag==0 or (flag==2 and random.random()>0.95) or (flag==1 and mat[w][h]=='1' and random.random()>0.8):
+				if flag==0 or (flag==2 and random.random()>0.95) or (flag==1 and mat[h][w]=='1' and r not in range(98,102)):
 					r = set_bit(r, 0, v[idx])
 					g = set_bit(g, 0, v[idx+1])
 					b = set_bit(b, 0, v[idx+2])
@@ -135,7 +135,7 @@ def extract(in_file, out_file, flag):
 	v = []
 	for h in range(height):
 		for w in range(width):
-			if flag==0 or mat[w][h]=='1':
+			if flag==0 or (mat[h][w]=='1' and conv.getpixel((w, h))[0] not in range(98,102)):
 				(r, g, b, a) = conv.getpixel((w, h))
 				v.append(r & 1)
 				v.append(g & 1)
