@@ -30,11 +30,11 @@ class dss():
         else:
             self.status = 1
             index = self.img_path.find('/')
-            if index == -1:
-                index = 0
+#            if index == -1:
+#                index = 0
             self.filename = self.img_path[index+1:]
-            if self.filename[-3:] not in ['jpg', 'png', 'bmp', 'jpeg']:
-                self.img = self.img.convert('RGB')
+            # if self.filename[-3:] not in ['jpg', 'png', 'bmp', 'jpeg']:
+            self.img = self.img.convert('RGB')
 
     def generate(self):
         self.getimg()
@@ -57,5 +57,5 @@ class dss():
             res = (out3 + out4 + out5 + fuse) / 4
             res = (res - np.min(res) + self.EPSILON) / (np.max(res) - np.min(res) + self.EPSILON)
 
-            self.res_path = 
-            plt.imsave('result2.png',res,cmap=cm.Greys_r)
+            self.res_path = self.filename[:-4] + '.png'
+            plt.imsave(self.res_path, res, cmap=cm.Greys_r)

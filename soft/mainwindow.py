@@ -78,7 +78,7 @@ class mainwindow_ui(object):
     def jump_to_encode(self):
         self.figure.hide()
         encode_window = encode_ui()
-        encode_window.figure.show()
+        # encode_window.figure.show()
         encode_window.figure.exec_()
         self.figure.show()
 
