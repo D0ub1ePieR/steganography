@@ -9,7 +9,7 @@ if __name__ == '__main__':
 
     file = sys.argv[1]
     try:
-        img = Image.open('./script/dss/' + file)
+        img = Image.open('./script/dss/' + file[:-4] + '.png')
         img = img.convert('L')
         mat = open('./script/' + file[:-4] + '.txt', 'w')
     except:

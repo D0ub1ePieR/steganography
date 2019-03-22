@@ -140,8 +140,8 @@ class color_stego:
             # region
             if flag == 1:
                 mat = []
-                file = open(self.image[:-4]+'.txt', "r")
-                for i in range(width):
+                file = open('./script/' + self.filename[:-4]+'.txt', "r")
+                for i in range(height):
                     mat.append(file.readline())
             # Extract LSBs
             v = []

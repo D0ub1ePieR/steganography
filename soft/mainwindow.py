@@ -1,7 +1,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMainWindow
 from encode import *
-
+from decode import *
 
 class mainwindow_ui(object):
     def __init__(self):
@@ -80,7 +80,21 @@ class mainwindow_ui(object):
         encode_window = encode_ui()
         # encode_window.figure.show()
         encode_window.figure.exec_()
+        #self.cleanfile()
         self.figure.show()
 
     def jump_to_decode(self):
         self.figure.hide()
+        decode_window = decode_ui()
+        decode_window.figure.exec_()
+        #self.cleanfile()
+        self.figure.show()
+
+    def cleanfile(self):
+        os.popen('del *.txt')
+        os.popen('del ./script/*.txt')
+        os.popen('del ./script/*.png')
+        os.popen('del ./script/*.pgm')
+        os.popen('del ./script/dss/*.txt')
+        os.popen('del ./script/dss/*.png')
+        os.popen('del ./script/dss/*.pgm')

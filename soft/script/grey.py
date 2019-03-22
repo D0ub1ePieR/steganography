@@ -138,8 +138,8 @@ class grey_stego:
             # region
             if flag == 1:
                 mat = []
-                file = open(self.image[:-4]+'.txt', "r")
-                for i in range(width):
+                file = open('./script/' + self.filename[:-4]+'.txt', "r")
+                for i in range(height):
                     mat.append(file.readline())
             # Extract LSBs
             v = []
@@ -148,7 +148,7 @@ class grey_stego:
             for h in range(height):
                 for w in range(width):
                     if flag == 0 or (
-                            mat[h][w] == '1' and conv.getpixel((w, h))[0] not in range(98, 102) and random_array[h][w] > 0.8):
+                            mat[h][w] == '1' and conv.getpixel((w, h)) not in range(98, 102) and random_array[h][w] > 0.8):
                         g = conv.getpixel((w, h))
                         v.append(g & 1)
 
