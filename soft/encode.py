@@ -5,6 +5,8 @@ import os
 from hashlib import md5
 from script.dss import dss
 from script import color, grey
+from stego_res import stego_res
+
 
 class encode_ui(object):
     def __init__(self):
@@ -152,6 +154,8 @@ class encode_ui(object):
         except:
             self.cover_preview.setText('cannot open image')
             self.img = 0
+            self.img_region = 0
+            self.region_mat = 0
         else:
             self.img = 1
 
@@ -217,6 +221,12 @@ class encode_ui(object):
 
     # 嵌入
     def embed(self):
+        res_window = stego_res(self.cover_path.text())
+        res_window.figure.show()
+        res_window.show()
+        res_window.figure.exec_()
+
+'''
         if self.img == 1 and self.img_region == 1 and self.region_mat == 1 and self.text == 1 and self.password == 1:
             tseed = md5()
             tseed.update(self.passwd.text().encode('utf-8'))
@@ -229,7 +239,11 @@ class encode_ui(object):
                 steg.run()
             except:
                 print(steg.msg)
+            res_window = stego_res(self.cover_path)
+            res_window.figure.show()
+            res_window.show()
         else:
             note = ''
             QtWidgets.QMessageBox.information(self.figure, 'warning', note,
                                               QtWidgets.QMessageBox.Ok)
+'''

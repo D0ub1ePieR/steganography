@@ -16,7 +16,7 @@ class grey_stego:
         self.msg = ''
         self.payload_size = 0
         self.info = {'image-size': [0, 0], 'usable-size': 0, 'payload-size': 0.0, 'extract-data': 0}
-        index = self.image.find('/')
+        index = self.image.rfind('/')
         self.filename = self.image[index + 1:]
 
     def decompose(self, data):
@@ -70,7 +70,7 @@ class grey_stego:
             # region
             if flag == 1:
                 mat = []
-                file = open('./script/' + self.image[:-4]+'.txt', "r")
+                file = open('./script/' + self.filename[:-4]+'.txt', "r")
                 for i in range(width):
                     mat.append(file.readline())
 
