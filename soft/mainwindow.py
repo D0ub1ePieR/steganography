@@ -2,6 +2,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMainWindow
 from encode import *
 from decode import *
+from batch import *
 
 class mainwindow_ui(object):
     def __init__(self):
@@ -54,6 +55,13 @@ class mainwindow_ui(object):
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
         MainWindow.setStatusBar(self.statusbar)
+        self.bat = QtWidgets.QPushButton(self.centralwidget)
+        self.bat.setGeometry(QtCore.QRect(190, 240, 171, 41))
+        font = QtGui.QFont()
+        font.setFamily("华文新魏")
+        font.setPointSize(15)
+        self.bat.setFont(font)
+        self.bat.setObjectName("bat")
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -66,11 +74,13 @@ class mainwindow_ui(object):
         self.encode.setText(_translate("MainWindow", "encode"))
         self.label_2.setText(_translate("MainWindow", "powered by:D0ub1ePieR"))
         self.exit.setText(_translate("MainWindow", "Exit"))
+        self.bat.setText(_translate('MainWindow', 'batch process'))
 
         # 按钮跳转
         self.encode.clicked.connect(self.jump_to_encode)
         self.decode.clicked.connect(self.jump_to_decode)
         self.exit.clicked.connect(self.jump_to_exit)
+        self.bat.clicked.connect(self.jump_to_bat)
 
     def jump_to_exit(self):
         self.figure.close()
@@ -90,13 +100,19 @@ class mainwindow_ui(object):
         self.cleanfile()
         self.figure.show()
 
+    def jump_to_bat(self):
+        self.figure.hide()
+        batch_window = batch()
+        batch_window.figure.exec_()
+        self.figure.show()
+
     def cleanfile(self):
-        os.popen('del *.txt')
-        os.popen('del *.png')
-        os.popen('del *.pgm')
-        os.popen('del .\script\*.txt')
-        os.popen('del .\script\*.png')
-        os.popen('del .\script\*.pgm')
-        os.popen('del .\script\dss\*.txt')
-        os.popen('del .\script\dss\*.png')
-        os.popen('del .\script\dss\*.pgm')
+        os.system('del *.txt')
+        os.system('del *.png')
+        os.system('del *.pgm')
+        os.system('del .\script\*.txt')
+        os.system('del .\script\*.png')
+        os.system('del .\script\*.pgm')
+        os.system('del .\script\dss\*.txt')
+        os.system('del .\script\dss\*.png')
+        os.system('del .\script\dss\*.pgm')

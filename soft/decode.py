@@ -180,7 +180,8 @@ class decode_ui(object):
             try:
                 steg.run()
             except:
-                print(steg.msg)
+                QtWidgets.QMessageBox.information(self.figure, 'warning', steg.msg,
+                                                  QtWidgets.QMessageBox.Ok)
             else:
                 f = open('tmp.txt', 'r')
                 with f:
