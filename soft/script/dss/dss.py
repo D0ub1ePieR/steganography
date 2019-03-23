@@ -57,5 +57,10 @@ class dss():
             res = (out3 + out4 + out5 + fuse) / 4
             res = (res - np.min(res) + self.EPSILON) / (np.max(res) - np.min(res) + self.EPSILON)
 
-            self.res_path = './script/dss/' + self.filename[:-4] + '.png'
+            if self.res_path == '':
+                self.res_path = './script/dss/' + self.filename[:-4] + '.png'
             plt.imsave(self.res_path, res, cmap=cm.Greys_r)
+
+    def set_path(self, img_path, res_path):
+        self.img_path = img_path
+        self.res_path = res_path

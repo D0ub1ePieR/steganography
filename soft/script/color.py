@@ -18,6 +18,8 @@ class color_stego:
         self.info = {'image-size': [0, 0], 'usable-size': 0, 'payload-size': 0.0, 'extract-data': 0}
         index = self.image.rfind('/')
         self.filename = self.image[index + 1:]
+        self.res_path = ''
+        self.mat_path = ''
 
     def decompose(self, data):
         v = []
@@ -70,8 +72,10 @@ class color_stego:
             # region
             if flag == 1:
                 mat = []
-                file = open('./script/' + self.filename[:-4]+'.txt', "r")
-                for i in range(width):
+                if self.mat_path == '':
+                    self.mat_path = './script/' + self.filename[:-4]+'.txt'
+                file = open(self.mat_path, "r")
+                for i in range(height):
                     mat.append(file.readline())
 
             if flag == 0 or flag == 2:
@@ -122,8 +126,9 @@ class color_stego:
                                 idx = idx - 3
                         data_img.putpixel((w, h), (r, g, b, a))
                         idx = idx + 3
-
-                steg_img.save('./script/' + self.filename + "-stego.png", "PNG")
+                if self.res_path == '':
+                    self.res_path = './script/' + self.filename + "-stego.png"
+                steg_img.save(self.res_path, "PNG")
                 self.status = 1
 
     def extract(self, flag):
@@ -140,7 +145,9 @@ class color_stego:
             # region
             if flag == 1:
                 mat = []
-                file = open('./script/' + self.filename[:-4]+'.txt', "r")
+                if self.mat_path == '':
+                    self.mat_path = './script/' + self.filename[:-4]+'.txt'
+                file = open(self.mat_path, "r")
                 for i in range(height):
                     mat.append(file.readline())
             # Extract LSBs
@@ -162,6 +169,10 @@ class color_stego:
             out_f = open(self.payload, "wb")
             out_f.write(data_out)
             out_f.close()
+
+    def set_path(self, res_path, mat_path):
+        self.res_path = res_path
+        self.mat_path = mat_path
 
     def run(self):
         if self.action == 'hide':
