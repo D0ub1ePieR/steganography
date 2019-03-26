@@ -1,7 +1,8 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QFileDialog
+from PyQt5.QtWidgets import QFileDialog, QTableWidgetItem
 from PyQt5.QtGui import QPixmap, QImage
 import os
+from PIL import Image
 from hashlib import md5
 from script.dss import dss
 from script import color, grey
@@ -22,6 +23,19 @@ class encode_ui(object):
         self.text = 0
         self.password = 0
         self.filename = ''
+        self.set_infotable()
+
+    def set_infotable(self):
+        self.infotable.verticalHeader().setVisible(False)
+        self.infotable.horizontalHeader().setVisible(False)
+        self.infotable.setColumnCount(2)
+        self.infotable.setRowCount(4)
+        self.infotable.setColumnWidth(0, int(self.infotable.width() / 2) - 1)
+        self.infotable.setColumnWidth(1, int(self.infotable.width() / 2) - 1)
+        self.infotable.setItem(0, 0, QTableWidgetItem('image-size'))
+        self.infotable.setItem(1, 0, QTableWidgetItem('image-type'))
+        self.infotable.setItem(2, 0, QTableWidgetItem('embed max size'))
+        self.infotable.setItem(3, 0, QTableWidgetItem('text size'))
 
     def setupUi(self, Dialog):
         # 隐写选择界面ui布局
@@ -90,7 +104,7 @@ class encode_ui(object):
         self.passwd = QtWidgets.QLineEdit(Dialog)
         self.passwd.setGeometry(QtCore.QRect(820, 100, 211, 20))
         self.passwd.setObjectName("passwd")
-        self.infotable = QtWidgets.QTableView(Dialog)
+        self.infotable = QtWidgets.QTableWidget(Dialog)
         self.infotable.setGeometry(QtCore.QRect(620, 200, 511, 291))
         self.infotable.setObjectName("infotable")
         self.generate = QtWidgets.QPushButton(Dialog)
@@ -151,6 +165,11 @@ class encode_ui(object):
             scale2 = self.cover_preview.width() / img.width()
             scale = min(scale1, scale2)
             self.cover_preview.setPixmap(QPixmap.fromImage(img.scaled(img.width() * scale, img.height() * scale)))
+            self.infotable.setItem(0, 1, QTableWidgetItem(str(img.width()) + '*' + str(img.height())))
+            if filename[-4:] == '.pgm':
+                self.infotable.setItem(1, 1, QTableWidgetItem('grey'))
+            else:
+                self.infotable.setItem(1, 1, QTableWidgetItem('color'))
         except:
             self.cover_preview.setText('cannot open image')
             self.img = 0
@@ -176,6 +195,7 @@ class encode_ui(object):
             self.info_preview.setText('cannot open file')
             self.text = 0
         else:
+            self.infotable.setItem(3, 1, QTableWidgetItem(str(os.path.getsize(self.info_path.text()) / 1024) + 'KB'))
             self.text = 1
 
     # 设置密码
@@ -217,6 +237,19 @@ class encode_ui(object):
                         QtWidgets.QMessageBox.information(self.figure, 'warning', tmp,
                                                           QtWidgets.QMessageBox.Ok)
                     else:
+                        file = open('./script/'+cal.filename[:-4]+'.txt', 'r')
+                        mat = []
+                        max_size = 0
+                        (width, height) = Image.open(cal.res_path).size
+                        for i in range(height):
+                            mat.append(file.readline())
+                        for i in range(height):
+                            for j in range(width):
+                                if mat[i][j] == '1':
+                                    max_size = max_size + 1
+                        max_size = max_size * 3.0 / 8 / 1024
+                        self.infotable.setItem(2, 1, QTableWidgetItem(str(max_size)+'KB'))
+                        file.close()
                         self.region_mat = 1
 
     # 嵌入
