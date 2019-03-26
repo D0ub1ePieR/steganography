@@ -169,6 +169,7 @@ class color_stego:
             out_f = open(self.payload, "wb")
             out_f.write(data_out)
             out_f.close()
+            self.status = 1
 
     def set_path(self, res_path, mat_path):
         self.res_path = res_path

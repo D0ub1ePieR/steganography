@@ -69,7 +69,7 @@ class batch(object):
         self.label_5 = QtWidgets.QLabel(Dialog)
         self.label_5.setGeometry(QtCore.QRect(460, 20, 54, 12))
         self.label_5.setObjectName("label_5")
-        self.decode_list = QtWidgets.QColumnView(Dialog)
+        self.decode_list = QtWidgets.QListWidget(Dialog)
         self.decode_list.setGeometry(QtCore.QRect(460, 340, 251, 231))
         self.decode_list.setObjectName("decode_list")
         self.label_6 = QtWidgets.QLabel(Dialog)
@@ -197,7 +197,7 @@ class batch(object):
 
     def encode(self):
         gui = QtGui.QGuiApplication.processEvents
-        if os.system('cd .\\tmp') == 0:
+        if os.system('cd .\\tmp') == 1:
             os.system('mkdir tmp')
         pack_path = self.encode_pack.text()
         t = os.system('mkdir ' + self.encode_output.text().replace('/', '\\'))
@@ -241,5 +241,50 @@ class batch(object):
                         self.encode_list.item(index).setText(file + '|' + steg.msg)
 
     def decode(self):
-        pass
+        gui = QtGui.QGuiApplication.processEvents
+        if os.system('cd .\\tmp') == 1:
+            os.system('mkdir tmp')
+        pack_path = self.decode_pack.text()
+        t = os.system('mkdir ' + self.decode_output.text().replace('/', '\\'))
+        filelist = []
+        self.decode_list.clear()
+        try:
+            for pwd, subfolder, files in os.walk(pack_path):
+                for file in files:
+                    if len(file) > 4 and file[-4:] in ['.png', '.pgm']:
+                        self.decode_list.addItem(file)
+                        filelist.append(file)
+                        gui()
+        except:
+            QtWidgets.QMessageBox.information(self.figure, 'warning', 'cannot open folder!',
+                                              QtWidgets.QMessageBox.Ok)
+        else:
+            cal = dss.dss()
+            for file in filelist:
+                cal.set_path(pack_path+'/'+file, './tmp/'+file[:-4]+'.png')
+                cal.generate()
+                self.calmat(cal.res_path, cal.filename[:-4]+'.txt')
+                gui()
+                tseed = md5()
+                tseed.update(self.decode_pwd.text().encode('utf-8'))
+                seed = int(tseed.hexdigest()[:6], 16)
+                if file[-3:] in ['png']:
+                    steg = color_stego('extract-region', pack_path+'/'+file,
+                                       pack_path + './output/' + file[:-4] + '.txt', seed)
+                    steg.set_path(self.decode_output.text()+'/'+file, './tmp/'+file[:-4]+'.txt')
+                else:
+                    steg = grey_stego('extract-region', pack_path + '/' + file,
+                                      pack_path + '/output/' + file[:-4] + '.txt', seed)
+                    steg.set_path(self.decode_output.text() + '/' + file, './tmp/' + file[:-4] + '.txt')
+                try:
+                    index = filelist.index(file)
+                    steg.run()
+                except:
+                    self.decode_list.item(index).setText(file + '|' + steg.msg)
+                else:
+                    if steg.status == 1:
+                        self.decode_list.item(index).setText(file + '|done')
+                    else:
+                        self.decode_list.item(index).setText(file + '|' + steg.msg)
+                        self.decode_list.item(index).setText(file + '|' + steg.msg)
 
