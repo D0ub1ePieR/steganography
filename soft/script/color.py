@@ -7,7 +7,8 @@ import random
 from PIL import Image
 
 class color_stego:
-    def __init__(self, action, image, payload, seed):
+    def __init__(self, action, image, payload, seed, type=1):
+        self.type = type
         self.action = action
         self.image = image
         self.payload = payload
@@ -84,7 +85,7 @@ class color_stego:
                 max_size = 0
                 for j in range(width):
                     for i in range(height):
-                        if mat[i][j] == '1':
+                        if mat[i][j] == str(self.type):
                             max_size = max_size + 1
                 max_size = max_size * 3.0 / 8 / 1024
             self.info['usable-size'] = max_size
@@ -118,7 +119,7 @@ class color_stego:
                         (r, g, b, a) = conv.getpixel((w, h))
                         if idx < len(v):
                             if flag == 0 or (flag == 2 and random.random() > 0.95) or (
-                                    flag == 1 and mat[h][w] == '1' and r not in range(98, 102) and random_array[h][w] > 0.8):
+                                    flag == 1 and mat[h][w] == str(self.type) and r not in range(98, 102) and random_array[h][w] > 0.8):
                                 r = self.set_bit(r, 0, v[idx])
                                 g = self.set_bit(g, 0, v[idx + 1])
                                 b = self.set_bit(b, 0, v[idx + 2])
@@ -157,7 +158,7 @@ class color_stego:
             for h in range(height):
                 for w in range(width):
                     if flag == 0 or (
-                            mat[h][w] == '1' and conv.getpixel((w, h))[0] not in range(98, 102) and random_array[h][w] > 0.8):
+                            mat[h][w] == str(self.type) and conv.getpixel((w, h))[0] not in range(98, 102) and random_array[h][w] > 0.8):
                         (r, g, b, a) = conv.getpixel((w, h))
                         v.append(r & 1)
                         v.append(g & 1)

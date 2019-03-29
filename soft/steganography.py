@@ -72,13 +72,14 @@ class steg_ui(object):
         self.figure.close()
 
     def jump_to_bat(self):
-        #self.figure.hide()
+        # self.figure.hide()
         batch_window = batch()
         batch_window.figure.exec_()
-        #self.figure.show()
+        os.system('rmdir /s/q tmp')
+        # self.figure.show()
 
     def jump_to_single(self):
-        #self.figure.hide()
+        # self.figure.hide()
         single_window = single_img()
         single_window.figure.exec_()
-        #self.figure.show()
+        # self.figure.show()

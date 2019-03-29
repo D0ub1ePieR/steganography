@@ -16,6 +16,17 @@ class single_img(object):
         Dialog.resize(560, 396)
         self.centralwidget = QtWidgets.QWidget(Dialog)
         self.centralwidget.setObjectName("centralwidget")
+
+        self.label = QtWidgets.QLabel(self.centralwidget)
+        self.label.setGeometry(QtCore.QRect(160, 40, 251, 101))
+        font = QtGui.QFont()
+        font.setFamily("楷体")
+        font.setPointSize(20)
+        self.label.setFont(font)
+        self.label.setFocusPolicy(QtCore.Qt.NoFocus)
+        self.label.setStyleSheet("")
+        self.label.setAlignment(QtCore.Qt.AlignCenter)
+        self.label.setObjectName("label")
         self.decode = QtWidgets.QPushButton(self.centralwidget)
         self.decode.setGeometry(QtCore.QRect(340, 180, 101, 41))
         font = QtGui.QFont()
@@ -39,26 +50,26 @@ class single_img(object):
         Dialog.setWindowTitle(_translate("Dialog", "steganography"))
         self.decode.setText(_translate("Dialog", "decode"))
         self.encode.setText(_translate("Dialog", "encode"))
-
+        self.label.setText(_translate("Dialog", "对单张图片进行操作"))
 
         # 按钮跳转
         self.encode.clicked.connect(self.jump_to_encode)
         self.decode.clicked.connect(self.jump_to_decode)
 
     def jump_to_encode(self):
-        #self.figure.hide()
+        # self.figure.hide()
         encode_window = encode_ui()
         # encode_window.figure.show()
         encode_window.figure.exec_()
         self.cleanfile()
-        #self.figure.show()
+        # self.figure.show()
 
     def jump_to_decode(self):
-        #self.figure.hide()
+        # self.figure.hide()
         decode_window = decode_ui()
         decode_window.figure.exec_()
         self.cleanfile()
-        #self.figure.show()
+        # self.figure.show()
 
     def cleanfile(self):
         os.system('del *.txt')

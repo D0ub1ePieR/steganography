@@ -17,6 +17,7 @@ class encode_ui(object):
         self.figure = window
         self.figure.show()
 
+        self.region_type = 0
         self.img = 0
         self.img_region = 0
         self.region_mat = 0
@@ -123,6 +124,45 @@ class encode_ui(object):
         self.label_3.setAlignment(QtCore.Qt.AlignCenter)
         self.label_3.setObjectName("label_3")
 
+        self.check = QtWidgets.QCheckBox(Dialog)
+        self.check.setGeometry(330, 390, 20, 20)
+        self.check.setWindowTitle('Checkbox')
+        self.label_4 = QtWidgets.QLabel(Dialog)
+        self.label_4.setGeometry(QtCore.QRect(350, 380, 131, 41))
+        self.label_4.setObjectName("label_3")
+
+        self.combo = QtWidgets.QComboBox(Dialog)
+        self.combo.setGeometry(QtCore.QRect(50, 390, 120, 35))
+        self.combo.setObjectName('combo')
+        self.combo.addItem('please choose')
+        self.combo.addItem('dss')
+        self.combo.addItem('...')
+
+        self.c1c = QtWidgets.QCheckBox(Dialog)
+        self.c2c = QtWidgets.QCheckBox(Dialog)
+        self.c3c = QtWidgets.QCheckBox(Dialog)
+        self.c4c = QtWidgets.QCheckBox(Dialog)
+        self.c1t = QtWidgets.QLabel(Dialog)
+        self.c2t = QtWidgets.QLabel(Dialog)
+        self.c3t = QtWidgets.QLabel(Dialog)
+        self.c4t = QtWidgets.QLabel(Dialog)
+        self.c1c.setGeometry(QtCore.QRect(720, 550, 20, 20))
+        self.c2c.setGeometry(QtCore.QRect(900, 550, 20, 20))
+        self.c3c.setGeometry(QtCore.QRect(720, 600, 20, 20))
+        self.c4c.setGeometry(QtCore.QRect(900, 600, 20, 20))
+        self.c1t.setGeometry(QtCore.QRect(750, 550, 120, 20))
+        self.c2t.setGeometry(QtCore.QRect(930, 550, 120, 20))
+        self.c3t.setGeometry(QtCore.QRect(750, 600, 120, 20))
+        self.c4t.setGeometry(QtCore.QRect(930, 600, 120, 20))
+        self.c1c.setWindowTitle('c1c')
+        self.c2c.setWindowTitle('c2c')
+        self.c3c.setWindowTitle('c3c')
+        self.c4c.setWindowTitle('c4c')
+        self.c1t.setObjectName("c1t")
+        self.c2t.setObjectName("c2t")
+        self.c3t.setObjectName("c3t")
+        self.c4t.setObjectName("c4t")
+
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
@@ -136,9 +176,14 @@ class encode_ui(object):
         self.label_2.setText(_translate("Dialog", "请输入写入信息"))
         self.info_choose.setText(_translate("Dialog", "..."))
         self.cal_region.setText(_translate("Dialog", "计算显著区域"))
-        self.pwd.setText(_translate("Dialog", "Paasword"))
+        self.pwd.setText(_translate("Dialog", "Password"))
         self.generate.setText(_translate("Dialog", "generate"))
         self.label_3.setText(_translate("Dialog", "图像信息"))
+        self.label_4.setText(_translate('Dialog', '是否在反选区域隐写'))
+        self.c1t.setText(_translate('Dialog', '不随机'))
+        self.c2t.setText(_translate('Dialog', '随机'))
+        self.c3t.setText(_translate('Dialog', 'HUGO'))
+        self.c4t.setText(_translate('Dialog', 'nsF5'))
 
         self.cover_choose.clicked.connect(self.img_choose)
         self.cover_path.textChanged.connect(self.img_show)
@@ -149,7 +194,14 @@ class encode_ui(object):
         self.passwd.textChanged.connect(self.set_passwd)
         self.cal_region.clicked.connect(self.cal_dss)
         self.generate.clicked.connect(self.embed)
+        self.check.stateChanged.connect(self.set_type)
         #self.cover_preview.setPixmap(QPixmap(self.cover_path.text()))
+
+    def set_type(self):
+        if self.check.isChecked():
+            self.region_type = 0
+        else:
+            self.region_type = 1
 
     # 选择图像地址
     def img_choose(self):
@@ -213,8 +265,9 @@ class encode_ui(object):
                                               QtWidgets.QMessageBox.Ok)
         else:
             try:
-                cal = dss.dss(self.cover_path.text())
-                cal.generate()
+                if self.combo.currentIndex() == 1:
+                    cal = dss.dss(self.cover_path.text())
+                    cal.generate()
             except:
                 QtWidgets.QMessageBox.information(self.figure, 'warning', '生成错误',
                                                   QtWidgets.QMessageBox.Ok)
@@ -245,7 +298,7 @@ class encode_ui(object):
                             mat.append(file.readline())
                         for i in range(height):
                             for j in range(width):
-                                if mat[i][j] == '1':
+                                if mat[i][j] == str(self.region_type):
                                     max_size = max_size + 1
                         max_size = max_size * 3.0 / 8 / 1024
                         self.infotable.setItem(2, 1, QTableWidgetItem(str(max_size)+'KB'))
@@ -259,9 +312,9 @@ class encode_ui(object):
             tseed.update(self.passwd.text().encode('utf-8'))
             seed = int(tseed.hexdigest()[:6], 16)
             if self.filename[-3:] in ['jpg', 'png', 'bmp']:
-                steg = color.color_stego('hide-region', self.cover_path.text(), self.info_path.text(), seed)
+                steg = color.color_stego('hide-region', self.cover_path.text(), self.info_path.text(), seed, self.region_type)
             else:
-                steg = grey.grey_stego('hide-region', self.cover_path.text(), self.info_path.text(), seed)
+                steg = grey.grey_stego('hide-region', self.cover_path.text(), self.info_path.text(), seed, self.region_type)
             try:
                 steg.run()
             except:

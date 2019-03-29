@@ -12,6 +12,7 @@ class decode_ui(object):
         self.figure = window
         self.figure.show()
 
+        self.region_type = 0
         self.img = 0
         self.img_region = 0
         self.region_mat = 0
@@ -86,6 +87,45 @@ class decode_ui(object):
         self.decode.setGeometry(QtCore.QRect(430, 480, 75, 23))
         self.decode.setObjectName("decode")
 
+        self.check = QtWidgets.QCheckBox(Dialog)
+        self.check.setGeometry(360, 390, 20, 20)
+        self.check.setWindowTitle('Checkbox')
+        self.label_3 = QtWidgets.QLabel(Dialog)
+        self.label_3.setGeometry(QtCore.QRect(380, 380, 131, 41))
+        self.label_3.setObjectName("label_3")
+
+        self.combo = QtWidgets.QComboBox(Dialog)
+        self.combo.setGeometry(QtCore.QRect(110, 380, 120, 35))
+        self.combo.setObjectName('combo')
+        self.combo.addItem('please choose')
+        self.combo.addItem('dss')
+        self.combo.addItem('...')
+
+        self.c1c = QtWidgets.QCheckBox(Dialog)
+        self.c2c = QtWidgets.QCheckBox(Dialog)
+        self.c3c = QtWidgets.QCheckBox(Dialog)
+        self.c4c = QtWidgets.QCheckBox(Dialog)
+        self.c1t = QtWidgets.QLabel(Dialog)
+        self.c2t = QtWidgets.QLabel(Dialog)
+        self.c3t = QtWidgets.QLabel(Dialog)
+        self.c4t = QtWidgets.QLabel(Dialog)
+        self.c1c.setGeometry(QtCore.QRect(350, 50, 20, 20))
+        self.c2c.setGeometry(QtCore.QRect(500, 50, 20, 20))
+        self.c3c.setGeometry(QtCore.QRect(350, 80, 20, 20))
+        self.c4c.setGeometry(QtCore.QRect(500, 80, 20, 20))
+        self.c1t.setGeometry(QtCore.QRect(380, 50, 120, 20))
+        self.c2t.setGeometry(QtCore.QRect(530, 50, 120, 20))
+        self.c3t.setGeometry(QtCore.QRect(380, 80, 120, 20))
+        self.c4t.setGeometry(QtCore.QRect(530, 80, 120, 20))
+        self.c1c.setWindowTitle('c1c')
+        self.c2c.setWindowTitle('c2c')
+        self.c3c.setWindowTitle('c3c')
+        self.c4c.setWindowTitle('c4c')
+        self.c1t.setObjectName("c1t")
+        self.c2t.setObjectName("c2t")
+        self.c3t.setObjectName("c3t")
+        self.c4t.setObjectName("c4t")
+
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
@@ -101,6 +141,11 @@ class decode_ui(object):
         self.label_2.setText(_translate("Dialog", "Data"))
         self.save_as.setText(_translate("Dialog", "保存结果"))
         self.decode.setText(_translate("Dialog", "解码"))
+        self.label_3.setText(_translate('Dialog', '是否在反选区域解码'))
+        self.c1t.setText(_translate('Dialog', '不随机'))
+        self.c2t.setText(_translate('Dialog', '随机'))
+        self.c3t.setText(_translate('Dialog', 'HUGO'))
+        self.c4t.setText(_translate('Dialog', 'nsF5'))
 
         self.stego_choose.clicked.connect(self.img_choose)
         self.stego_path.textChanged.connect(self.img_show)
@@ -170,13 +215,17 @@ class decode_ui(object):
 
     def extract(self):
         if self.img == 1 and self.img_region == 1 and self.region_mat == 1 and self.password == 1:
+            if self.check.isChecked():
+                self.region_type = 0
+            else:
+                self.region_type = 1
             tseed = hashlib.md5()
             tseed.update(self.passwd.text().encode('utf-8'))
             seed = int(tseed.hexdigest()[:6], 16)
             if self.filename[-3:] in ['jpg', 'png', 'bmp']:
-                steg = color.color_stego('extract-region', self.stego_path.text(), 'tmp.txt', seed)
+                steg = color.color_stego('extract-region', self.stego_path.text(), 'tmp.txt', seed, self.region_type)
             else:
-                steg = grey.grey_stego('extract-region', self.stego_path.text(), 'tmp.txt', seed)
+                steg = grey.grey_stego('extract-region', self.stego_path.text(), 'tmp.txt', seed, self.region_type)
             try:
                 steg.run()
             except:
