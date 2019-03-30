@@ -2,12 +2,12 @@ import sys
 import struct
 import numpy
 import matplotlib.pyplot as plt
-import random
 
 from PIL import Image
 
 class grey_stego:
     def __init__(self, action, image, payload, seed):
+        self.type = type
         self.action = action
         self.image = image
         self.payload = payload
@@ -112,18 +112,24 @@ class grey_stego:
                 data_img = steg_img.getdata()
                 idx = 0
                 numpy.random.seed(self.seed)
-                random_array = numpy.random.random(size=(height, width))
+                random_array = []
                 for h in range(height):
                     for w in range(width):
-                        g = conv.getpixel((w, h))
-                        if idx < len(v):
-                            if flag == 0 or (flag == 2 and random.random() > 0.95) or (
-                                    flag == 1 and mat[h][w] == '1' and g not in range(98, 102) and random_array[h][w] > 0.8):
-                                g = self.set_bit(g, 0, v[idx])
-                            else:
-                                idx = idx - 1
-                        data_img.putpixel((w, h), g)
-                        idx = idx + 1
+                        random_array.append([h, w])
+                if flag == 1:
+                    numpy.random.shuffle(random_array)
+
+                for pix in random_array:
+                    (h, w) = (pix[0], pix[1])
+                    g = conv.getpixel((w, h))
+                    if idx < len(v):
+                        if flag == 0 or (flag == 2 and random.random() > 0.95) or (
+                                flag == 1 and mat[h][w] == str(self.type) and g not in range(98, 102)):
+                            g = self.set_bit(g, 0, v[idx])
+                        else:
+                            idx = idx - 1
+                    data_img.putpixel((w, h), g)
+                    idx = idx + 1
                 if self.res_path == '':
                     self.res_path = './script/' + self.filename + "-stego.pgm"
                 steg_img.save(self.res_path)
@@ -151,13 +157,20 @@ class grey_stego:
             # Extract LSBs
             v = []
             numpy.random.seed(self.seed)
-            random_array = numpy.random.random(size=(height, width))
+            random_array = []
             for h in range(height):
                 for w in range(width):
-                    if flag == 0 or (
-                            mat[h][w] == '1' and conv.getpixel((w, h)) not in range(98, 102) and random_array[h][w] > 0.8):
-                        g = conv.getpixel((w, h))
-                        v.append(g & 1)
+                    random_array.append([h, w])
+
+            if flag == 1:
+                numpy.random.shuffle(random_array)
+
+            for pix in random_array:
+                (h, w) = (pix[0], pix[1])
+                if flag == 0 or (
+                        mat[h][w] == str(self.type) and conv.getpixel((w, h)) not in range(98, 102)):
+                    g = conv.getpixel((w, h))
+                    v.append(g & 1)
 
             data_out = self.assemble(v)
 

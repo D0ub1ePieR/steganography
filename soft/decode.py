@@ -12,7 +12,7 @@ class decode_ui(object):
         self.figure = window
         self.figure.show()
 
-        self.region_type = 0
+        self.region_type = 1
         self.img = 0
         self.img_region = 0
         self.region_mat = 0
@@ -153,6 +153,13 @@ class decode_ui(object):
         self.passwd.textChanged.connect(self.set_passwd)
         self.decode.clicked.connect(self.extract)
         self.save_as.clicked.connect(self.save_text)
+        self.check.stateChanged.connect(self.set_type)
+
+    def set_type(self):
+        if self.check.isChecked():
+            self.region_type = 0
+        else:
+            self.region_type = 1
 
     def img_choose(self):
         filename, _ = QFileDialog().getOpenFileName(self.figure, 'choose cover', '../LSB/LSB1')
@@ -215,10 +222,6 @@ class decode_ui(object):
 
     def extract(self):
         if self.img == 1 and self.img_region == 1 and self.region_mat == 1 and self.password == 1:
-            if self.check.isChecked():
-                self.region_type = 0
-            else:
-                self.region_type = 1
             tseed = hashlib.md5()
             tseed.update(self.passwd.text().encode('utf-8'))
             seed = int(tseed.hexdigest()[:6], 16)

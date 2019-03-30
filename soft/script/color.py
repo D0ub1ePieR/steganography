@@ -2,7 +2,6 @@ import sys
 import struct
 import numpy
 import matplotlib.pyplot as plt
-import random
 
 from PIL import Image
 
@@ -113,20 +112,26 @@ class color_stego:
                 data_img = steg_img.getdata()
                 idx = 0
                 numpy.random.seed(self.seed)
-                random_array = numpy.random.random(size=(height, width))
+                random_array = []
                 for h in range(height):
                     for w in range(width):
-                        (r, g, b, a) = conv.getpixel((w, h))
-                        if idx < len(v):
-                            if flag == 0 or (flag == 2 and random.random() > 0.95) or (
-                                    flag == 1 and mat[h][w] == str(self.type) and r not in range(98, 102) and random_array[h][w] > 0.8):
-                                r = self.set_bit(r, 0, v[idx])
-                                g = self.set_bit(g, 0, v[idx + 1])
-                                b = self.set_bit(b, 0, v[idx + 2])
-                            else:
-                                idx = idx - 3
-                        data_img.putpixel((w, h), (r, g, b, a))
-                        idx = idx + 3
+                        random_array.append([h, w])
+                if flag == 1:
+                    numpy.random.shuffle(random_array)
+
+                for pix in random_array:
+                    (h, w) = (pix[0], pix[1])
+                    (r, g, b, a) = conv.getpixel((w, h))
+                    if idx < len(v):
+                        if flag == 0 or (flag == 2 and random.random() > 0.95) or (
+                                flag == 1 and mat[h][w] == str(self.type) and r not in range(98, 102)):
+                            r = self.set_bit(r, 0, v[idx])
+                            g = self.set_bit(g, 0, v[idx + 1])
+                            b = self.set_bit(b, 0, v[idx + 2])
+                        else:
+                            idx = idx - 3
+                    data_img.putpixel((w, h), (r, g, b, a))
+                    idx = idx + 3
                 if self.res_path == '':
                     self.res_path = './script/' + self.filename + "-stego.png"
                 steg_img.save(self.res_path, "PNG")
@@ -154,15 +159,22 @@ class color_stego:
             # Extract LSBs
             v = []
             numpy.random.seed(self.seed)
-            random_array = numpy.random.random(size=(height, width))
+            random_array = []
             for h in range(height):
                 for w in range(width):
-                    if flag == 0 or (
-                            mat[h][w] == str(self.type) and conv.getpixel((w, h))[0] not in range(98, 102) and random_array[h][w] > 0.8):
-                        (r, g, b, a) = conv.getpixel((w, h))
-                        v.append(r & 1)
-                        v.append(g & 1)
-                        v.append(b & 1)
+                    random_array.append([h, w])
+
+            if flag == 1:
+                numpy.random.shuffle(random_array)
+
+            for pix in random_array:
+                (h, w) = (pix[0], pix[1])
+                if flag == 0 or (
+                        mat[h][w] == str(self.type) and conv.getpixel((w, h))[0] not in range(98, 102)):
+                    (r, g, b, a) = conv.getpixel((w, h))
+                    v.append(r & 1)
+                    v.append(g & 1)
+                    v.append(b & 1)
 
             data_out = self.assemble(v)
 

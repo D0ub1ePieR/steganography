@@ -17,7 +17,7 @@ class encode_ui(object):
         self.figure = window
         self.figure.show()
 
-        self.region_type = 0
+        self.region_type = 1
         self.img = 0
         self.img_region = 0
         self.region_mat = 0
