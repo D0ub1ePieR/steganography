@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from PIL import Image
 
 class grey_stego:
-    def __init__(self, action, image, payload, seed):
+    def __init__(self, action, image, payload, seed, type =1):
         self.type = type
         self.action = action
         self.image = image

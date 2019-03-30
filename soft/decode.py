@@ -13,6 +13,7 @@ class decode_ui(object):
         self.figure.show()
 
         self.region_type = 1
+        self.steg_type = 0
         self.img = 0
         self.img_region = 0
         self.region_mat = 0
@@ -154,12 +155,45 @@ class decode_ui(object):
         self.decode.clicked.connect(self.extract)
         self.save_as.clicked.connect(self.save_text)
         self.check.stateChanged.connect(self.set_type)
+        self.c1c.stateChanged.connect(self.c1)
+        self.c2c.stateChanged.connect(self.c2)
+        self.c3c.stateChanged.connect(self.c3)
+        self.c4c.stateChanged.connect(self.c4)
 
     def set_type(self):
         if self.check.isChecked():
             self.region_type = 0
         else:
             self.region_type = 1
+
+    def c1(self):
+        if self.c1c.isChecked():
+            self.steg_type = 1
+        else:
+            if self.steg_type == 1:
+                self.steg_type = 0
+
+    def c2(self):
+        if self.c1c.isChecked():
+            self.steg_type = 2
+        else:
+            if self.steg_type == 2:
+                self.steg_type = 0
+
+    def c3(self):
+        if self.c1c.isChecked():
+            self.steg_type = 3
+        else:
+            if self.steg_type == 3:
+                self.steg_type = 0
+
+    def c4(self):
+        if self.c1c.isChecked():
+            self.steg_type = 4
+        else:
+            if self.steg_type == 4:
+                self.steg_type = 0
+
 
     def img_choose(self):
         filename, _ = QFileDialog().getOpenFileName(self.figure, 'choose cover', '../LSB/LSB1')

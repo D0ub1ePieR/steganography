@@ -18,6 +18,7 @@ class encode_ui(object):
         self.figure.show()
 
         self.region_type = 1
+        self.steg_type = 0
         self.img = 0
         self.img_region = 0
         self.region_mat = 0
@@ -195,6 +196,10 @@ class encode_ui(object):
         self.cal_region.clicked.connect(self.cal_dss)
         self.generate.clicked.connect(self.embed)
         self.check.stateChanged.connect(self.set_type)
+        self.c1c.stateChanged.connect(self.c1)
+        self.c2c.stateChanged.connect(self.c2)
+        self.c3c.stateChanged.connect(self.c3)
+        self.c4c.stateChanged.connect(self.c4)
         #self.cover_preview.setPixmap(QPixmap(self.cover_path.text()))
 
     def set_type(self):
@@ -202,6 +207,34 @@ class encode_ui(object):
             self.region_type = 0
         else:
             self.region_type = 1
+
+    def c1(self):
+        if self.c1c.isChecked():
+            self.steg_type = 1
+        else:
+            if self.steg_type == 1:
+                self.steg_type = 0
+
+    def c2(self):
+        if self.c1c.isChecked():
+            self.steg_type = 2
+        else:
+            if self.steg_type == 2:
+                self.steg_type = 0
+
+    def c3(self):
+        if self.c1c.isChecked():
+            self.steg_type = 3
+        else:
+            if self.steg_type == 3:
+                self.steg_type = 0
+
+    def c4(self):
+        if self.c1c.isChecked():
+            self.steg_type = 4
+        else:
+            if self.steg_type == 4:
+                self.steg_type = 0
 
     # 选择图像地址
     def img_choose(self):
@@ -260,8 +293,8 @@ class encode_ui(object):
 
     # 计算显著性区域
     def cal_dss(self):
-        if self.img != 1:
-            QtWidgets.QMessageBox.information(self.figure, 'warning', '没有选择图像',
+        if self.img != 1 or self.combo.currentIndex() == 0:
+            QtWidgets.QMessageBox.information(self.figure, 'warning', '没有选择图像或显著性算法',
                                               QtWidgets.QMessageBox.Ok)
         else:
             try:
@@ -307,23 +340,24 @@ class encode_ui(object):
 
     # 嵌入
     def embed(self):
-        if self.img == 1 and self.img_region == 1 and self.region_mat == 1 and self.text == 1 and self.password == 1:
+        if self.img == 1 and self.img_region == 1 and self.region_mat == 1 and self.text == 1 and self.password == 1 and self.steg_type != 0:
             tseed = md5()
             tseed.update(self.passwd.text().encode('utf-8'))
             seed = int(tseed.hexdigest()[:6], 16)
-            if self.filename[-3:] in ['jpg', 'png', 'bmp']:
-                steg = color.color_stego('hide-region', self.cover_path.text(), self.info_path.text(), seed, self.region_type)
-            else:
-                steg = grey.grey_stego('hide-region', self.cover_path.text(), self.info_path.text(), seed, self.region_type)
-            try:
-                steg.run()
-            except:
-                print(steg.msg)
-            else:
-                res_window = stego_res(self.cover_path.text())
-                res_window.figure.show()
-                res_window.show()
-                res_window.figure.exec_()
+            if self.steg_type in [1, 2]:
+                if self.filename[-3:] in ['jpg', 'png', 'bmp']:
+                    steg = color.color_stego('hide-region', self.cover_path.text(), self.info_path.text(), seed, self.region_type, self.steg_type-1)
+                else:
+                    steg = grey.grey_stego('hide-region', self.cover_path.text(), self.info_path.text(), seed, self.region_type, self.steg_type-1)
+                try:
+                    steg.run()
+                except:
+                    print(steg.msg)
+                else:
+                    res_window = stego_res(self.cover_path.text())
+                    res_window.figure.show()
+                    res_window.show()
+                    res_window.figure.exec_()
         else:
             note = ''
             QtWidgets.QMessageBox.information(self.figure, 'warning', note,
