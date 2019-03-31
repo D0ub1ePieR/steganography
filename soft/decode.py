@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QFileDialog
 from PyQt5.QtGui import QImage, QPixmap
 from script.dss import dss
 import os, hashlib
-from script import color, grey
+from script import color, grey, hugo
 
 class decode_ui(object):
     def __init__(self):
@@ -174,21 +174,21 @@ class decode_ui(object):
                 self.steg_type = 0
 
     def c2(self):
-        if self.c1c.isChecked():
+        if self.c2c.isChecked():
             self.steg_type = 2
         else:
             if self.steg_type == 2:
                 self.steg_type = 0
 
     def c3(self):
-        if self.c1c.isChecked():
+        if self.c3c.isChecked():
             self.steg_type = 3
         else:
             if self.steg_type == 3:
                 self.steg_type = 0
 
     def c4(self):
-        if self.c1c.isChecked():
+        if self.c4c.isChecked():
             self.steg_type = 4
         else:
             if self.steg_type == 4:
@@ -255,19 +255,27 @@ class decode_ui(object):
             self.password = 0
 
     def extract(self):
-        if self.img == 1 and self.img_region == 1 and self.region_mat == 1 and self.password == 1:
+        if self.img == 1 and self.img_region == 1 and self.region_mat == 1 and self.password == 1 and self.steg_type != 0:
             tseed = hashlib.md5()
             tseed.update(self.passwd.text().encode('utf-8'))
             seed = int(tseed.hexdigest()[:6], 16)
-            if self.filename[-3:] in ['jpg', 'png', 'bmp']:
-                steg = color.color_stego('extract-region', self.stego_path.text(), 'tmp.txt', seed, self.region_type)
-            else:
-                steg = grey.grey_stego('extract-region', self.stego_path.text(), 'tmp.txt', seed, self.region_type)
+            if self.steg_type in [1, 2]:
+                if self.filename[-3:] in ['jpg', 'png', 'bmp']:
+                    steg = color.color_stego('extract-region', self.stego_path.text(), 'tmp.txt', seed, self.region_type)
+                else:
+                    steg = grey.grey_stego('extract-region', self.stego_path.text(), 'tmp.txt', seed, self.region_type)
+            elif self.steg_type == 3 and self.filename[-4:] == '.pgm':
+                steg = hugo.hugo('extract', self.stego_path.text(), 'tmp.txt', self.region_type, seed)
+
             try:
                 steg.run()
             except:
-                QtWidgets.QMessageBox.information(self.figure, 'warning', steg.msg,
-                                                  QtWidgets.QMessageBox.Ok)
+                if steg:
+                    QtWidgets.QMessageBox.information(self.figure, 'warning', steg.msg,
+                                                    QtWidgets.QMessageBox.Ok)
+                else:
+                    QtWidgets.QMessageBox.information(self.figure, 'warning', 'steg init fail',
+                                                      QtWidgets.QMessageBox.Ok)
             else:
                 f = open('tmp.txt', 'r')
                 with f:

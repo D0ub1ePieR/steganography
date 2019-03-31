@@ -5,7 +5,7 @@ import os
 from PIL import Image
 from hashlib import md5
 from script.dss import dss
-from script import color, grey
+from script import color, grey, hugo
 from stego_res import stego_res
 
 
@@ -216,21 +216,21 @@ class encode_ui(object):
                 self.steg_type = 0
 
     def c2(self):
-        if self.c1c.isChecked():
+        if self.c2c.isChecked():
             self.steg_type = 2
         else:
             if self.steg_type == 2:
                 self.steg_type = 0
 
     def c3(self):
-        if self.c1c.isChecked():
+        if self.c3c.isChecked():
             self.steg_type = 3
         else:
             if self.steg_type == 3:
                 self.steg_type = 0
 
     def c4(self):
-        if self.c1c.isChecked():
+        if self.c4c.isChecked():
             self.steg_type = 4
         else:
             if self.steg_type == 4:
@@ -349,15 +349,21 @@ class encode_ui(object):
                     steg = color.color_stego('hide-region', self.cover_path.text(), self.info_path.text(), seed, self.region_type, self.steg_type-1)
                 else:
                     steg = grey.grey_stego('hide-region', self.cover_path.text(), self.info_path.text(), seed, self.region_type, self.steg_type-1)
-                try:
-                    steg.run()
-                except:
-                    print(steg.msg)
-                else:
-                    res_window = stego_res(self.cover_path.text())
-                    res_window.figure.show()
-                    res_window.show()
-                    res_window.figure.exec_()
+            elif self.steg_type == 3 and self.filename[-4:] == '.pgm':
+                steg = hugo.hugo('hide', self.cover_path.text(), self.info_path.text(), self.region_type, seed)
+            else:
+                pass
+
+            try:
+                steg.run()
+            except:
+                QtWidgets.QMessageBox.information(self.figure, 'warning', 'stego fail',
+                                                  QtWidgets.QMessageBox.Ok)
+            else:
+                res_window = stego_res(self.cover_path.text())
+                res_window.figure.show()
+                res_window.show()
+                res_window.figure.exec_()
         else:
             note = ''
             QtWidgets.QMessageBox.information(self.figure, 'warning', note,
