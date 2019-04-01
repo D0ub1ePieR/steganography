@@ -6,8 +6,9 @@ import matplotlib.pyplot as plt
 from PIL import Image
 
 class grey_stego:
-    def __init__(self, action, image, payload, seed, type =1):
+    def __init__(self, action, image, payload, seed, type =1, flag=1):
         self.type = type
+        self.flag = flag
         self.action = action
         self.image = image
         self.payload = payload
@@ -70,7 +71,7 @@ class grey_stego:
             self.info['image-size'] = [width, height]
 
             # region
-            if flag == 1:
+            if flag == 1 and flag == 0:
                 mat = []
                 if self.mat_path == '':
                     self.mat_path = './script/' + self.filename[:-4]+'.txt'
@@ -78,7 +79,7 @@ class grey_stego:
                 for i in range(width):
                     mat.append(file.readline())
 
-            if flag == 0 or flag == 2:
+            if flag == 2:
                 max_size = width * height / 8 / 1024  # max payload size
             else:
                 max_size = 0
@@ -123,7 +124,7 @@ class grey_stego:
                     (h, w) = (pix[0], pix[1])
                     g = conv.getpixel((w, h))
                     if idx < len(v):
-                        if flag == 0 or (flag == 2 and random.random() > 0.95) or (
+                        if (flag == 0 and mat[h][w] == str(self.type)) or (
                                 flag == 1 and mat[h][w] == str(self.type) and g not in range(98, 102)):
                             g = self.set_bit(g, 0, v[idx])
                         else:
@@ -147,7 +148,7 @@ class grey_stego:
             conv = img.convert("L").getdata()
             self.info['image-size'] = [width, height]
             # region
-            if flag == 1:
+            if flag == 1 and flag == 0:
                 mat = []
                 if self.mat_path == '':
                     self.mat_path = './script/' + self.filename[:-4]+'.txt'
@@ -167,7 +168,7 @@ class grey_stego:
 
             for pix in random_array:
                 (h, w) = (pix[0], pix[1])
-                if flag == 0 or (
+                if (flag == 0 and mat[h][w] == str(self.type)) or (
                         mat[h][w] == str(self.type) and conv.getpixel((w, h)) not in range(98, 102)):
                     g = conv.getpixel((w, h))
                     v.append(g & 1)
@@ -187,8 +188,8 @@ class grey_stego:
         if self.action == 'hide':
             self.embed(0)
         elif self.action == 'hide-region':
-            self.embed(1)
+            self.embed(self.flag)
         elif self.action == 'extract':
             self.extract(0)
         elif self.action == 'extract-region':
-            self.extract(1)
+            self.extract(self.flag)
