@@ -120,11 +120,25 @@ class color_stego:
                 if flag == 1:
                     numpy.random.shuffle(random_array)
 
+                def checkpix(h, w):
+                    r = 15
+                    if h not in range(r, height-r) or w not in range(r,width-r):
+                        return True
+                    else:
+                        for i in range(-r, r+1):
+                            for j in range(-r, r+1):
+                                if mat[h+i][h+j] == '1':
+                                    return False
+                    return True
+
                 for pix in random_array:
                     (h, w) = (pix[0], pix[1])
                     (r, g, b, a) = conv.getpixel((w, h))
                     if idx < len(v):
                         if (flag == 0 and mat[h][w] == str(self.type)) or (flag == 1 and mat[h][w] == str(self.type) and r not in range(98, 102)):
+                            if self.type == 0 and not checkpix(h, w):
+                                data_img.putpixel((w, h), (r, g, b, a))
+                                continue
                             r = self.set_bit(r, 0, v[idx])
                             g = self.set_bit(g, 0, v[idx + 1])
                             b = self.set_bit(b, 0, v[idx + 2])
@@ -167,9 +181,22 @@ class color_stego:
             if flag == 1:
                 numpy.random.shuffle(random_array)
 
+            def checkpix(h, w):
+                r = 15
+                if h not in range(r, height - r) or w not in range(r, width - r):
+                    return True
+                else:
+                    for i in range(-r, r + 1):
+                        for j in range(-r, r + 1):
+                            if mat[h+i][h+j] == '1':
+                                return False
+                return True
+
             for pix in random_array:
                 (h, w) = (pix[0], pix[1])
                 if (flag == 0 and mat[h][w] == str(self.type)) or (flag == 1 and mat[h][w] == str(self.type) and conv.getpixel((w, h))[0] not in range(98, 102)):
+                    if self.type == 0 and not checkpix(h, w):
+                        continue
                     (r, g, b, a) = conv.getpixel((w, h))
                     v.append(r & 1)
                     v.append(g & 1)

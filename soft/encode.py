@@ -2,6 +2,8 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QFileDialog, QTableWidgetItem
 from PyQt5.QtGui import QPixmap, QImage
 import os
+import cv2
+import copy
 from PIL import Image
 from hashlib import md5
 from script.dss import dss
@@ -344,9 +346,28 @@ class encode_ui(object):
             tseed = md5()
             tseed.update(self.passwd.text().encode('utf-8'))
             seed = int(tseed.hexdigest()[:6], 16)
+            path = self.cover_path.text()
             if self.steg_type in [1, 2]:
                 if self.filename[-3:] in ['jpg', 'png', 'bmp']:
-                    steg = color.color_stego('hide-region', self.cover_path.text(), self.info_path.text(), seed, self.region_type, self.steg_type-1)
+                    if self.region_type == 0:
+                        img = cv2.imread(self.cover_path.text())
+                        img2 = copy.copy(img)
+                        img = cv2.GaussianBlur(img, (5,5), 1.5)
+                        fid = open('./script/'+self.filename[:-4]+'.txt', 'r')
+                        mat = []
+                        t = ' '
+                        while t:
+                            t = fid.readline()
+                            mat.append(t)
+                        for i in range(img.shape[0]):
+                            for j in range(img.shape[1]):
+                                if mat[i][j] == '1' or (i in range(3, img.shape[0]-3) and j in range(3, img.shape[1]-3) and (
+                                        mat[i-3][j-3] == '1' or mat[i-3][j+3] == '1' or mat[i+3][j-3] == '1' or mat[i+3][j+3] == '1')):
+                                    img[i][j] = img2[i][j]
+                        cv2.imwrite(self.filename, img)
+                        pwd = os.getcwd()
+                        path = pwd + '/' + self.filename
+                    steg = color.color_stego('hide-region', path, self.info_path.text(), seed, self.region_type, self.steg_type-1)
                 else:
                     steg = grey.grey_stego('hide-region', self.cover_path.text(), self.info_path.text(), seed, self.region_type, self.steg_type-1)
             elif self.steg_type == 3 and self.filename[-4:] == '.pgm':
@@ -360,7 +381,7 @@ class encode_ui(object):
                 QtWidgets.QMessageBox.information(self.figure, 'warning', 'stego fail',
                                                   QtWidgets.QMessageBox.Ok)
             else:
-                res_window = stego_res(self.cover_path.text())
+                res_window = stego_res(path)
                 res_window.figure.show()
                 res_window.show()
                 res_window.figure.exec_()
