@@ -12,6 +12,10 @@ import caffe
 class dss():
     def __init__(self, path=''):
         self.EPSILON = 1e-8
+        # remove the following two lines if testing with cpu
+        # caffe.set_mode_gpu()
+        # choose which GPU you want to use
+        # caffe.set_device(0)
         caffe.SGDSolver.display = 0
         self.net = caffe.Net('./script/dss/deploy.prototxt', './script/dss/dss_model_released.caffemodel', caffe.TEST)
         self.img_path = path
