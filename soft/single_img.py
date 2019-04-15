@@ -61,14 +61,14 @@ class single_img(object):
         encode_window = encode_ui()
         # encode_window.figure.show()
         encode_window.figure.exec_()
-        self.cleanfile()
+        # self.cleanfile()
         # self.figure.show()
 
     def jump_to_decode(self):
         # self.figure.hide()
         decode_window = decode_ui()
         decode_window.figure.exec_()
-        self.cleanfile()
+        # self.cleanfile()
         # self.figure.show()
 
     def cleanfile(self):

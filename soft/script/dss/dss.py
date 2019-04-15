@@ -43,6 +43,9 @@ class dss():
     def generate(self):
         self.getimg()
         if self.status == 1:
+            if os.path.exists('./script/dss/' + self.filename[:-4] + '.png'):
+                self.res_path = './script/dss/' + self.filename[:-4] + '.png'
+                return
             self.img = np.array(self.img, dtype=np.uint8)
             im = np.array(self.img, dtype=np.float32)
             im = im[:, :, ::-1]

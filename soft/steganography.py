@@ -70,6 +70,7 @@ class steg_ui(object):
 
     def jump_to_exit(self):
         self.figure.close()
+        self.cleanfile()
 
     def jump_to_bat(self):
         # self.figure.hide()
@@ -83,3 +84,14 @@ class steg_ui(object):
         single_window = single_img()
         single_window.figure.exec_()
         # self.figure.show()
+
+    def cleanfile(self):
+        os.system('del *.txt')
+        os.system('del *.png')
+        os.system('del *.pgm')
+        os.system('del .\script\*.txt')
+        os.system('del .\script\*.png')
+        os.system('del .\script\*.pgm')
+        os.system('del .\script\dss\*.txt')
+        os.system('del .\script\dss\*.png')
+        os.system('del .\script\dss\*.pgm')

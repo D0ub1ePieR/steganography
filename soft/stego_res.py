@@ -1,12 +1,13 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QFileDialog
+from PyQt5.QtWidgets import QFileDialog, QTableWidgetItem
 from PyQt5.QtGui import QPixmap, QImage
 from PIL import Image
 import os
+from script.assess.psnr import psnr
 
 
 class stego_res(object):
-    def __init__(self, cover_path):
+    def __init__(self, cover_path, size, bit_num):
         window = QtWidgets.QDialog()
         self.setupUi(window)
         self.figure = window
@@ -15,6 +16,22 @@ class stego_res(object):
         index = cover_path.rfind('/')
         self.filename = cover_path[index + 1:]
         self.stego_path = './script/' + self.filename + '-stego.' + self.filename[-3:]
+        self.psnr_d = psnr(self.cover_path, self.stego_path)
+        self.size = size
+        self.bit_num = bit_num
+        self.set_table()
+
+    def set_table(self):
+        self.tableView.verticalHeader().setVisible(False)
+        self.tableView.horizontalHeader().setVisible(False)
+        self.tableView.setColumnCount(2)
+        self.tableView.setRowCount(4)
+        self.tableView.setColumnWidth(0, int(self.tableView.width() / 2) - 1)
+        self.tableView.setColumnWidth(1, int(self.tableView.width() / 2) - 1)
+        self.tableView.setItem(0, 0, QTableWidgetItem('image-size'))
+        self.tableView.setItem(1, 0, QTableWidgetItem('embed-size'))
+        self.tableView.setItem(2, 0, QTableWidgetItem('change-bit'))
+        self.tableView.setItem(3, 0, QTableWidgetItem('psnr'))
 
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
@@ -55,7 +72,7 @@ class stego_res(object):
         self.save_as = QtWidgets.QPushButton(Dialog)
         self.save_as.setGeometry(QtCore.QRect(290, 290, 75, 23))
         self.save_as.setObjectName("save_as")
-        self.tableView = QtWidgets.QTableView(Dialog)
+        self.tableView = QtWidgets.QTableWidget(Dialog)
         self.tableView.setGeometry(QtCore.QRect(30, 350, 601, 192))
         self.tableView.setObjectName("tableView")
         self.label_4 = QtWidgets.QLabel(Dialog)
@@ -117,3 +134,8 @@ class stego_res(object):
         img = QImage('tmp.png')
         self.sub.setPixmap(QPixmap.fromImage(img.scaled(img.width() * scale, img.height() * scale)))
         os.popen('del tmp.png')
+
+        self.tableView.setItem(0, 1, QTableWidgetItem(str(img.height())+'*'+str(img.width())))
+        self.tableView.setItem(1, 1, QTableWidgetItem(str(self.size)))
+        self.tableView.setItem(2, 1, QTableWidgetItem(str(self.bit_num)))
+        self.tableView.setItem(3, 1, QTableWidgetItem(str(self.psnr_d.get_psnr())))

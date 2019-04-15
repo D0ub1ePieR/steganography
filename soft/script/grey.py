@@ -12,6 +12,7 @@ class grey_stego:
         self.action = action
         self.image = image
         self.payload = payload
+        self.bit_num = 0
         self.seed = seed
         self.status = 0
         self.msg = ''
@@ -127,6 +128,7 @@ class grey_stego:
                         if (flag == 0 and mat[h][w] == str(self.type)) or (
                                 flag == 1 and mat[h][w] == str(self.type) and g not in range(98, 102)):
                             g = self.set_bit(g, 0, v[idx])
+                            self.bit_num += 1
                         else:
                             idx = idx - 1
                     data_img.putpixel((w, h), g)

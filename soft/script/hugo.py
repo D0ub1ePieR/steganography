@@ -14,6 +14,7 @@ class hugo:
         self.mat_path = ''
         self.status = 0
         self.action = action
+        self.bit_num = 0
 
         index = self.cover_path.rfind('/')
         self.filename = self.cover_path[index + 1:]
@@ -103,6 +104,7 @@ class hugo:
                 if idx < len(v):
                     if mat[h][w] == str(self.region_type) and g not in range(98, 102):
                         g = self.set_bit(g, 0, v[idx])
+                        self.bit_num += 1
                     else:
                         idx = idx - 1
                 data_img.putpixel((w, h), g)

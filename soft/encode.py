@@ -381,7 +381,7 @@ class encode_ui(object):
                 QtWidgets.QMessageBox.information(self.figure, 'warning', 'stego fail',
                                                   QtWidgets.QMessageBox.Ok)
             else:
-                res_window = stego_res(path)
+                res_window = stego_res(path, steg.payload_size, steg.bit_num)
                 res_window.figure.show()
                 res_window.show()
                 res_window.figure.exec_()
