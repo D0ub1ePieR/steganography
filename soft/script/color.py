@@ -132,7 +132,7 @@ class color_stego:
                 # 对于取反区域模糊后的嵌入,判断是否为区域边缘
                 def checkpix(h, w):
                     r = 15
-                    if h not in range(r, height-r) or w not in range(r,width-r):
+                    if h not in range(r, height-r) or w not in range(r, width-r):
                         return True
                     else:
                         for i in range(-r, r+1):
@@ -150,10 +150,12 @@ class color_stego:
                             if self.type == 0 and not checkpix(h, w):
                                 data_img.putpixel((w, h), (r, g, b, a))
                                 continue
+                            tmp = (r, g, b)
                             r = self.set_bit(r, 0, v[idx])
                             g = self.set_bit(g, 0, v[idx + 1])
                             b = self.set_bit(b, 0, v[idx + 2])
-                            self.bit_num += 1
+                            if tmp != (r, g, b):
+                                self.bit_num += 1
                         else:
                             idx = idx - 3
                     data_img.putpixel((w, h), (r, g, b, a))
@@ -161,7 +163,7 @@ class color_stego:
                 # 如果没有给定结果地址,则采用默认地址
                 if self.res_path == '':
                     self.res_path = './script/' + self.filename + "-stego." + self.filename[-3:]
-                steg_img.save(self.res_path, "PNG")
+                steg_img.save(self.res_path)
                 self.status = 1
 
     # 提取信息

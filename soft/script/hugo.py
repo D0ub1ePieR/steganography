@@ -103,8 +103,10 @@ class hugo:
                 g = conv.getpixel((w, h))
                 if idx < len(v):
                     if mat[h][w] == str(self.region_type) and g not in range(98, 102):
+                        tmp = g
                         g = self.set_bit(g, 0, v[idx])
-                        self.bit_num += 1
+                        if tmp != g:
+                            self.bit_num += 1
                     else:
                         idx = idx - 1
                 data_img.putpixel((w, h), g)

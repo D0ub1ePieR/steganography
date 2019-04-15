@@ -127,8 +127,10 @@ class grey_stego:
                     if idx < len(v):
                         if (flag == 0 and mat[h][w] == str(self.type)) or (
                                 flag == 1 and mat[h][w] == str(self.type) and g not in range(98, 102)):
+                            tmp = g
                             g = self.set_bit(g, 0, v[idx])
-                            self.bit_num += 1
+                            if tmp != g:
+                                self.bit_num += 1
                         else:
                             idx = idx - 1
                     data_img.putpixel((w, h), g)
