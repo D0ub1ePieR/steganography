@@ -160,7 +160,7 @@ class color_stego:
                     idx = idx + 3
                 # 如果没有给定结果地址,则采用默认地址
                 if self.res_path == '':
-                    self.res_path = './script/' + self.filename + "-stego.png"
+                    self.res_path = './script/' + self.filename + "-stego." + self.filename[-3:]
                 steg_img.save(self.res_path, "PNG")
                 self.status = 1
 

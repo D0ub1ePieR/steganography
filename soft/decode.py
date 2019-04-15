@@ -203,7 +203,8 @@ class decode_ui(object):
     def img_show(self):
         filename = self.stego_path.text()
         try:
-            img = QImage(filename)
+            f = open(filename, 'rb')
+            img = QImage.fromData(f.read())
             scale1 = self.stego_preview.height() / img.height()
             scale2 = self.stego_preview.width() / img.width()
             scale = min(scale1, scale2)
@@ -231,7 +232,9 @@ class decode_ui(object):
                     QtWidgets.QMessageBox.information(self.figure, 'warning', cal.msg,
                                                       QtWidgets.QMessageBox.Ok)
                 else:
-                    img = QImage(cal.res_path)
+                    f = open(cal.res_path, 'rb')
+                    img = QImage.fromData(f.read())
+                    f.close()
                     scale1 = self.stego_region.height() / img.height()
                     scale2 = self.stego_region.width() / img.width()
                     scale = min(scale1, scale2)
