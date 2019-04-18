@@ -385,8 +385,9 @@ class encode_ui(object):
 
             try:
                 steg.run()
+                assert steg.status == 1
             except:
-                QtWidgets.QMessageBox.information(self.figure, 'warning', 'stego fail',
+                QtWidgets.QMessageBox.information(self.figure, 'warning', 'stego fail\n'+steg.msg,
                                                   QtWidgets.QMessageBox.Ok)
             else:
                 res_window = stego_res(path, steg.payload_size, steg.bit_num)
