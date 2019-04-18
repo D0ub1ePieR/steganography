@@ -3,13 +3,17 @@ from PIL import Image
 
 
 if __name__ == '__main__':
-    if len(sys.argv) != 2:
+    if len(sys.argv) != 3:
         print('input error\n')
         exit(-1)
 
-    file = sys.argv[1]
+    if sys.argv[1] == '1':
+        path = './script/dss/'
+    elif sys.argv[1] == '2':
+        path = './script/ras/'
+    file = sys.argv[2]
     try:
-        img = Image.open('./script/dss/' + file[:-4] + '.png')
+        img = Image.open(path + file[:-4] + '.png')
         img = img.convert('L')
         mat = open('./script/' + file[:-4] + '.txt', 'w')
     except:

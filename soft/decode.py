@@ -2,6 +2,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QFileDialog
 from PyQt5.QtGui import QImage, QPixmap
 from script.dss import dss
+from script.ras import ras
 import os, hashlib
 from script import color, grey, hugo
 
@@ -100,6 +101,7 @@ class decode_ui(object):
         self.combo.setObjectName('combo')
         self.combo.addItem('please choose')
         self.combo.addItem('dss')
+        self.combo.addItem('ras')
         self.combo.addItem('...')
 
         self.c1c = QtWidgets.QCheckBox(Dialog)
@@ -222,7 +224,10 @@ class decode_ui(object):
                                               QtWidgets.QMessageBox.Ok)
         else:
             try:
-                cal = dss.dss(self.stego_path.text())
+                if self.combo.currentIndex() == 1:
+                    cal = dss.dss(self.stego_path.text())
+                elif self.combo.currentIndex() == 2:
+                    cal = ras.ras(self.stego_path.text())
                 cal.generate()
             except:
                 QtWidgets.QMessageBox.information(self.figure, 'warning', '生成错误',
@@ -242,7 +247,7 @@ class decode_ui(object):
                         QPixmap.fromImage(img.scaled(img.width() * scale, img.height() * scale)))
                     self.img_region = 1
                     self.filename = cal.filename
-                    tmp = os.popen("python ./script/res2mat.py " + cal.filename).read()
+                    tmp = os.popen("python ./script/res2mat.py " + str(self.combo.currentIndex()) + " " + cal.filename).read()
                     print(tmp)
                     if tmp[:7] != 'success':
                         QtWidgets.QMessageBox.information(self.figure, 'warning', tmp,

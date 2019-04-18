@@ -9,6 +9,7 @@ from hashlib import md5
 from script.dss import dss
 from script import color, grey, hugo
 from stego_res import stego_res
+from script.ras import ras
 
 
 class encode_ui(object):
@@ -139,6 +140,7 @@ class encode_ui(object):
         self.combo.setObjectName('combo')
         self.combo.addItem('please choose')
         self.combo.addItem('dss')
+        self.combo.addItem('ras')
         self.combo.addItem('...')
 
         self.c1c = QtWidgets.QCheckBox(Dialog)
@@ -304,7 +306,9 @@ class encode_ui(object):
             try:
                 if self.combo.currentIndex() == 1:
                     cal = dss.dss(self.cover_path.text())
-                    cal.generate()
+                elif self.combo.currentIndex() == 2:
+                    cal = ras.ras(self.cover_path.text())
+                cal.generate()
             except:
                 QtWidgets.QMessageBox.information(self.figure, 'warning', '生成错误',
                                                   QtWidgets.QMessageBox.Ok)
@@ -323,7 +327,7 @@ class encode_ui(object):
                         QPixmap.fromImage(img.scaled(img.width() * scale, img.height() * scale)))
                     self.img_region = 1
                     self.filename = cal.filename
-                    tmp = os.popen("python ./script/res2mat.py " + cal.filename).read()
+                    tmp = os.popen("python ./script/res2mat.py " + str(self.combo.currentIndex()) + " " + cal.filename).read()
                     print(tmp)
                     if tmp[:7] != 'success':
                         QtWidgets.QMessageBox.information(self.figure, 'warning', tmp,
