@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QFileDialog, QTableWidgetItem
 from PyQt5.QtGui import QPixmap, QImage
 from PIL import Image
 import os
-from script.assess.psnr import psnr
+from script.assess.assess import calculate
 
 
 class stego_res(object):
@@ -16,18 +16,21 @@ class stego_res(object):
         index = cover_path.rfind('/')
         self.filename = cover_path[index + 1:]
         self.stego_path = './script/' + self.filename + '-stego.' + self.filename[-3:]
-        self.psnr_d = psnr(self.cover_path, self.stego_path)
+        self.assess_d = calculate(self.cover_path, self.stego_path)
         self.size = size
         self.bit_num = bit_num
-        self.set_table()
+        if self.filename[-3:] == 'pgm':
+            self.set_table(5)
+        else:
+            self.set_table(7)
 
-    def set_table(self):
+    def set_table(self, row):
         self.tableView.verticalHeader().setVisible(False)
         self.tableView.horizontalHeader().setVisible(False)
         self.tableView.setColumnCount(2)
-        self.tableView.setRowCount(4)
-        self.tableView.setColumnWidth(0, int(self.tableView.width() / 2) - 1)
-        self.tableView.setColumnWidth(1, int(self.tableView.width() / 2) - 1)
+        self.tableView.setRowCount(row)
+        self.tableView.setColumnWidth(0, int(self.tableView.width() / 2) - 2)
+        self.tableView.setColumnWidth(1, int(self.tableView.width() / 2) - 2)
         self.tableView.setItem(0, 0, QTableWidgetItem('image-size'))
         self.tableView.setItem(1, 0, QTableWidgetItem('embed-size'))
         self.tableView.setItem(2, 0, QTableWidgetItem('change-bit'))
@@ -144,4 +147,17 @@ class stego_res(object):
         self.tableView.setItem(0, 1, QTableWidgetItem(str(img.height())+'*'+str(img.width())))
         self.tableView.setItem(1, 1, QTableWidgetItem(str(self.size)))
         self.tableView.setItem(2, 1, QTableWidgetItem(str(self.bit_num)))
-        self.tableView.setItem(3, 1, QTableWidgetItem(str(self.psnr_d.get_psnr())))
+        self.tableView.setItem(3, 1, QTableWidgetItem(str(self.assess_d.get_psnr())))
+        self.sp = self.assess_d.get_sp()
+        if self.filename[-3:] == 'pgm':
+            self.tableView.setItem(4, 0, QTableWidgetItem('sp_grey'))
+            self.tableView.setItem(4, 1, QTableWidgetItem(str(self.sp['grey'])))
+        else:
+            self.tableView.setItem(4, 0, QTableWidgetItem('sp_r'))
+            self.tableView.setItem(5, 0, QTableWidgetItem('sp_g'))
+            self.tableView.setItem(6, 0, QTableWidgetItem('sp_b'))
+            self.tableView.setItem(4, 1, QTableWidgetItem(str(self.sp['r'])))
+            self.tableView.setItem(5, 1, QTableWidgetItem(str(self.sp['g'])))
+            self.tableView.setItem(6, 1, QTableWidgetItem(str(self.sp['b'])))
+
+
