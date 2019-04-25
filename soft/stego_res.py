@@ -151,13 +151,13 @@ class stego_res(object):
         self.sp = self.assess_d.get_sp()
         if self.filename[-3:] == 'pgm':
             self.tableView.setItem(4, 0, QTableWidgetItem('sp_grey'))
-            self.tableView.setItem(4, 1, QTableWidgetItem(str(self.sp['grey'])))
+            self.tableView.setItem(4, 1, QTableWidgetItem(str(self.sp['grey'])[:7]))
         else:
             self.tableView.setItem(4, 0, QTableWidgetItem('sp_r'))
             self.tableView.setItem(5, 0, QTableWidgetItem('sp_g'))
             self.tableView.setItem(6, 0, QTableWidgetItem('sp_b'))
-            self.tableView.setItem(4, 1, QTableWidgetItem(str(self.sp['r'])))
-            self.tableView.setItem(5, 1, QTableWidgetItem(str(self.sp['g'])))
-            self.tableView.setItem(6, 1, QTableWidgetItem(str(self.sp['b'])))
+            self.tableView.setItem(4, 1, QTableWidgetItem(str(self.sp['r'])[:7]))
+            self.tableView.setItem(5, 1, QTableWidgetItem(str(self.sp['g'])[:7]))
+            self.tableView.setItem(6, 1, QTableWidgetItem(str(self.sp['b'])[:7]))
 
 

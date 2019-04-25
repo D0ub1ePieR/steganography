@@ -10,6 +10,7 @@ from script.dss import dss
 from script import color, grey, hugo
 from stego_res import stego_res
 from script.ras import ras
+from script.assess.assess import calculate
 
 
 class encode_ui(object):
@@ -34,7 +35,7 @@ class encode_ui(object):
         self.infotable.verticalHeader().setVisible(False)
         self.infotable.horizontalHeader().setVisible(False)
         self.infotable.setColumnCount(2)
-        self.infotable.setRowCount(4)
+        self.infotable.setRowCount(7)
         self.infotable.setColumnWidth(0, int(self.infotable.width() / 2) - 1)
         self.infotable.setColumnWidth(1, int(self.infotable.width() / 2) - 1)
         self.infotable.setItem(0, 0, QTableWidgetItem('image-size'))
@@ -257,10 +258,19 @@ class encode_ui(object):
             scale = min(scale1, scale2)
             self.cover_preview.setPixmap(QPixmap.fromImage(img.scaled(img.width() * scale, img.height() * scale)))
             self.infotable.setItem(0, 1, QTableWidgetItem(str(img.width()) + '*' + str(img.height())))
+            tmp = calculate(filename, filename)
             if filename[-4:] == '.pgm':
                 self.infotable.setItem(1, 1, QTableWidgetItem('grey'))
+                self.infotable.setItem(4, 0, QTableWidgetItem('sp_grey'))
+                self.infotable.setItem(4, 1, QTableWidgetItem(str(tmp.sp['grey'])[:7]))
             else:
                 self.infotable.setItem(1, 1, QTableWidgetItem('color'))
+                self.infotable.setItem(4, 0, QTableWidgetItem('sp_r'))
+                self.infotable.setItem(5, 0, QTableWidgetItem('sp_g'))
+                self.infotable.setItem(6, 0, QTableWidgetItem('sp_b'))
+                self.infotable.setItem(4, 1, QTableWidgetItem(str(tmp.sp['r'])[:7]))
+                self.infotable.setItem(5, 1, QTableWidgetItem(str(tmp.sp['g'])[:7]))
+                self.infotable.setItem(6, 1, QTableWidgetItem(str(tmp.sp['b'])[:7]))
         except:
             self.cover_preview.setText('cannot open image')
             self.img = 0
