@@ -2,6 +2,7 @@ import os
 from PIL import Image
 import numpy
 import struct
+import matlab.engine
 
 class hugo:
     def __init__(self, action, cover_path, info_path, region_type, seed):
@@ -14,7 +15,9 @@ class hugo:
         self.mat_path = ''
         self.status = 0
         self.action = action
+        self.payload_size = 0
         self.bit_num = 0
+        #self.eng = matlab.engine.start_matlab('-nodesktop')
 
         index = self.cover_path.rfind('/')
         self.filename = self.cover_path[index + 1:]
@@ -65,7 +68,7 @@ class hugo:
         if self.mat_path == '':
             self.mat_path = './script/hugo/' + self.filename[:-4] + '.txt'
         file = open(self.mat_path, "r")
-        for i in range(width):
+        for i in range(height):
             mat.append(file.readline())
 
         max_size = 0
@@ -83,6 +86,7 @@ class hugo:
             v.append(0)
 
         payload_size = len(v) / 8 / 1024.0
+        self.payload_size = payload_size
         # print("[+] Encrypted payload size: %.3f KB " % (payload_size))
         if (payload_size > max_size - 4 / 1024):
             self.status = 0
@@ -148,11 +152,16 @@ class hugo:
         out_f.close()
 
     def run(self):
-        # file_size = os.path.getsize(self.info_path)
+        try:
+            file_size = os.path.getsize(self.info_path)
+        except:
+            file_size = 1024
         pwd = os.getcwd()
-        os.chdir('./script/hugo')
+        #os.chdir('./script/hugo')
+        #self.eng.chdir('./script/hugo')
+        #self.eng.hugo(file_size, self.cover_path, nargout=0)
         # os.system('matlab -nojvm -nodesktop -nosplash -r hugo('+str(file_size)+',\''+self.cover_path+'\')')
-        while not os.path.exists('./'+self.filename[:-4]+'.txt'):
+        while not os.path.exists('./script/hugo/'+self.filename[:-4]+'.txt'):
             pass
         os.chdir(pwd)
         if self.action == 'hide':

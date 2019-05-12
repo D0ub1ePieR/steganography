@@ -64,7 +64,8 @@ class calculate():
             self.sp['g'] = sp(g)
             self.sp['b'] = sp(b)
         else:
-            grey = self.img2
+            img = np.asarray(Image.open(self.stego))
+            grey = img[:, :]
             self.sp['grey'] = sp(grey)
 
     def get_sp(self):
