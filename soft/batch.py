@@ -6,6 +6,7 @@ from PIL import Image
 from script.dss import dss
 from script.color import color_stego
 from script.grey import grey_stego
+from script.ras import ras
 
 
 class batch(object):
@@ -214,7 +215,7 @@ class batch(object):
             QtWidgets.QMessageBox.information(self.figure, 'warning', 'cannot open folder!',
                                               QtWidgets.QMessageBox.Ok)
         else:
-            cal = dss.dss()
+            cal = ras.ras()
             for file in filelist:
                 cal.set_path(pack_path+'/'+file, './tmp/'+file[:-4]+'.png')
                 cal.generate()
@@ -259,7 +260,7 @@ class batch(object):
             QtWidgets.QMessageBox.information(self.figure, 'warning', 'cannot open folder!',
                                               QtWidgets.QMessageBox.Ok)
         else:
-            cal = dss.dss()
+            cal = ras.ras()
             for file in filelist:
                 cal.set_path(pack_path+'/'+file, './tmp/'+file[:-4]+'.png')
                 cal.generate()
