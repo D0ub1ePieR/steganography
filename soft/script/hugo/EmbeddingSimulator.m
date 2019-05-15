@@ -22,16 +22,20 @@ function EmbeddingSimulator(x, rhoP1, rhoM1, m, filename)
     pChangeP1 = (exp(-lambda .* rhoP1))./(1 + exp(-lambda .* rhoP1) + exp(-lambda .* rhoM1));
     pChangeM1 = (exp(-lambda .* rhoM1))./(1 + exp(-lambda .* rhoP1) + exp(-lambda .* rhoM1));
     
-%     randChange = rand(size(x)); 
+%     randChange = rand(size(x));
 %     randChange(find(mat==0))=pChangeP1(find(mat==0))+pChangeM1(find(mat==0));
-    pChangeP1(pChangeP1<0.0001) = 0;
-    pChangeP1(pChangeP1~=0) = 1;
-    disp(numel(find(pChangeP1==1)))
+%    pChangeP1(pChangeP1<0.0005) = 1;
+%    pChangeP1(pChangeP1~=0) = 0;
+
+    y = x;
+    y(pChangeP1<0.000001) = 0;
+    y(y~=0) = 1;
+    disp(numel(find(y==1)))
     fid = fopen(fullfile('./',strcat(filename(1:length(filename)-4),'.txt')),'w');
-    sizep = size(pChangeP1);
+    sizep = size(y);
     for i = 1:sizep(1)
         for j = 1:sizep(2)
-            fprintf(fid,'%d',pChangeP1(i,j));
+            fprintf(fid,'%d',y(i,j));
         end
         fprintf(fid,'\n');
     end

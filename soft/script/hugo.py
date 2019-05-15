@@ -21,6 +21,12 @@ class hugo:
 
         index = self.cover_path.rfind('/')
         self.filename = self.cover_path[index + 1:]
+        if action == 'hide':
+            fid = open('tempfile.txt', 'w')
+            fid.write(self.filename)
+        else:
+            fid = open('tempfile.txt', 'r')
+            self.filename = fid.readline()
 
     def decompose(self, data):
         v = []
@@ -100,7 +106,7 @@ class hugo:
             for h in range(height):
                 for w in range(width):
                     random_array.append([h, w])
-            numpy.random.shuffle(random_array)
+            #numpy.random.shuffle(random_array)
 
             for pix in random_array:
                 (h, w) = (pix[0], pix[1])
@@ -138,7 +144,7 @@ class hugo:
         for h in range(height):
             for w in range(width):
                 random_array.append([h, w])
-        numpy.random.shuffle(random_array)
+        #numpy.random.shuffle(random_array)
 
         for pix in random_array:
             (h, w) = (pix[0], pix[1])
@@ -152,14 +158,12 @@ class hugo:
         out_f.close()
 
     def run(self):
-        try:
-            file_size = os.path.getsize(self.info_path)
-        except:
-            file_size = 1024
+        file_size = 1024
         pwd = os.getcwd()
         #os.chdir('./script/hugo')
-        #self.eng.chdir('./script/hugo')
-        #self.eng.hugo(file_size, self.cover_path, nargout=0)
+        if not os.path.exists('./script/hugo/'+self.filename[:-4]+'.txt'):
+            self.eng.chdir('./script/hugo')
+            self.eng.hugo(file_size, self.cover_path, nargout=0)
         # os.system('matlab -nojvm -nodesktop -nosplash -r hugo('+str(file_size)+',\''+self.cover_path+'\')')
         while not os.path.exists('./script/hugo/'+self.filename[:-4]+'.txt'):
             pass
