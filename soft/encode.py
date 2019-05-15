@@ -370,17 +370,18 @@ class encode_ui(object):
                     if self.region_type == 0:
                         img = cv2.imread(self.cover_path.text())
                         img2 = copy.copy(img)
-                        img = cv2.GaussianBlur(img, (5,5), 1.5)
+                        img = cv2.GaussianBlur(img, (3, 3), 1)
                         fid = open('./script/'+self.filename[:-4]+'.txt', 'r')
                         mat = []
                         t = ' '
                         while t:
                             t = fid.readline()
                             mat.append(t)
+                        step = 10
                         for i in range(img.shape[0]):
                             for j in range(img.shape[1]):
-                                if mat[i][j] == '1' or (i in range(3, img.shape[0]-3) and j in range(3, img.shape[1]-3) and (
-                                        mat[i-3][j-3] == '1' or mat[i-3][j+3] == '1' or mat[i+3][j-3] == '1' or mat[i+3][j+3] == '1')):
+                                if mat[i][j] == '1' or (i in range(step, img.shape[0]-step) and j in range(step, img.shape[1]-step) and (
+                                        mat[i-step][j-step] == '1' or mat[i-step][j+step] == '1' or mat[i+step][j-step] == '1' or mat[i+step][j+step] == '1')):
                                     img[i][j] = img2[i][j]
                         cv2.imwrite(self.filename, img)
                         pwd = os.getcwd()
